@@ -24,8 +24,12 @@ def get_db_connection():
         database='ahp_db',      # Thay bằng tên database của bạn
         user='postgres',        # Thay bằng tên user của bạn
         password='123',         # Thay bằng mật khẩu của bạn
-        host='localhost',
+        host='dpg-d12qec15pdvs73d1e680-a',
         port='5432'
+        dbname='ahp_db',
+        user='ahp_db_user',
+        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',
+        sslmode='require'
     )
     return conn
 
