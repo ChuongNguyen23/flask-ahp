@@ -1,0 +1,483 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- meta data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+
+  <!--font-family-->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+  
+  <!-- title of site -->
+  <title>CarVilla</title>
+
+  <!-- For favicon png -->
+  <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='assets/logo/favicon.png') }}"/>
+ 
+  <!--font-awesome.min.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/font-awesome.min.css') }}">
+
+  <!--linear icon css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/linearicons.css') }}">
+
+  <!--flaticon.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+
+  <!--animate.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+
+  <!--owl.carousel.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.theme.default.min.css') }}">
+  
+  <!--bootstrap.min.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}">
+  
+  <!-- bootsnav -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootsnav.css') }}" >   
+  
+  <!--style.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  
+  <!--responsive.css-->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+  
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  
+  <style>
+    .single-featured-cars {
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+    .single-featured-cars.selected {
+      border: 2px solid #4c00ff;
+      box-shadow: 0 0 10px rgb(0, 8, 255);
+    }
+    .navbar-default {
+      background-color: #000 !important;
+      border-color: #000 !important;
+    }
+    .navbar-default .navbar-brand,
+    .navbar-default .navbar-nav>li>a {
+      color: #fff !important;
+    }
+    .progress-container {
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+    .progress-container .progress {
+      margin-bottom: 15px;
+    }
+
+    /* 1. Khôi phục kích thước header ban đầu */
+    .navbar-default {
+      height: 114px !important; /* Chiều cao tự động */
+    }
+
+    /* 2. Sửa khoảng cách cho section */
+    #featured-cars {
+      scroll-margin-top: 70px; /* Bù header khi scroll */
+      padding-top: 70px !important; /* Đẩy nội dung xuống */
+      margin-top: -30px !important; /* Bù trừ khoảng cách dư */
+    }
+
+    /* 3. Sửa menu fixed nếu cần */
+    .header-area {
+      position: relative !important; /* Vô hiệu hóa fixed */
+      top: auto !important;
+    }
+
+    /* 4. Đảm bảo container không bị ảnh hưởng */
+    .container {
+      padding-top: 0 !important;
+    }
+
+    /* Thêm style cho thanh tìm kiếm */
+    .search-container {
+      margin-bottom: 20px;
+    }
+    .search-container input[type="text"] {
+      width: calc(100% - 120px);
+      display: inline-block;
+      max-width: 400px;
+    }
+    .search-container button {
+      width: 100px;
+      display: inline-block;
+    }
+    .search-warning {
+      margin-top: 10px;
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+	
+<body>
+  <!-- Navigation -->
+  <section id="home2" class="welcome-2hero">
+    <div class="top-area">
+      <div class="header-area">
+        <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="1000">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                <i class="fa fa-bars"></i>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('index') }}">AHP Auto Advisor<span></span></a>
+            </div>
+            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+              <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                <li class="scroll active"><a href="#home">Trang chủ</a></li>
+                <li class="scroll"><a href="#service">Dịch vụ</a></li>
+                <li class="scroll"><a href="#featured-cars">Xe nổi bật</a></li>
+                <li class="scroll"><a href="#new-cars">Xe mới</a></li>
+                <li class="scroll"><a href="#brand">Thương hiệu</a></li>
+                <li class="scroll"><a href="#contact">Liên hệ</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </section>
+
+  <!-- Phần chọn xe -->
+  <section id="featured-cars" data-total="{{ vehicles|length }}">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2>Danh<span> sách các xe theo yêu cầu</span></h2>
+        <p>Chọn xe <span>cho quá trình đánh giá</span></p>
+      </div>
+
+      <!-- Thanh tìm kiếm -->
+      <div class="search-container text-center">
+        <input 
+          type="text" 
+          id="vehicleSearchInput" 
+          class="form-control d-inline-block" 
+          placeholder="Nhập tên xe cần tìm..." 
+        >
+        <button id="vehicleSearchBtn" class="btn btn-primary">
+          <i class="fa fa-search"></i> Tìm
+        </button>
+        <div id="searchWarning" class="search-warning">Không có xe phù hợp.</div>
+      </div>
+
+      <div id="vehicleWarning" class="text-danger text-center mb-3"></div>
+
+      <form method="POST" action="{{ url_for('select_vehicles') }}">
+        <div class="featured-cars-content">
+          <div class="row" id="vehicleGrid">
+            {% for vehicle in vehicles %}
+              <div 
+                class="col-lg-3 col-md-4 col-sm-6 mb-4 single-featured-cars-item" 
+                data-name="{{ vehicle.ten_xe | lower }}"
+              >
+                <div 
+                  class="single-featured-cars" 
+                  id="card_{{ loop.index }}" 
+                  onclick="toggleCard('{{ loop.index }}')"
+                >
+                  <div class="featured-img-box">
+                    <div class="featured-cars-img">
+                      <img 
+                        src="{{ url_for('static', filename='assets/images/featured-cars/' ~ vehicle.img_path) }}" 
+                        alt="cars"
+                      >
+                    </div>
+                    <div class="featured-model-info">
+                      <p>
+                        model: {{ vehicle.model_year }}
+                        <span class="featured-mi-span"> {{ vehicle.mileage }} mi</span>
+                        <span class="featured-hp-span"> {{ vehicle.hp }}HP</span>
+                        {{ vehicle.transmission }}
+                      </p>
+                    </div>
+                  </div>
+                  <div class="featured-cars-txt">
+                    <h2><a href="#">{{ vehicle.ten_xe }}</a></h2>
+                    <h3>${{ "{:,.0f}".format(vehicle.price) }}</h3>
+                    <p>{{ vehicle.description }}</p>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    name="vehicle" 
+                    value="{{ vehicle.ten_xe }}" 
+                    id="checkbox_{{ loop.index }}" 
+                    hidden
+                  >
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Thanh tiến trình và nút "Tiếp tục" -->
+        <div class="progress-container">
+          <div class="progress" style="margin-bottom: 15px;">
+            <div 
+              id="vehicleProgress" 
+              class="progress-bar" 
+              role="progressbar" 
+              style="width: 0%;" 
+              aria-valuenow="0" 
+              aria-valuemin="0" 
+              aria-valuemax="{{ vehicles|length }}"
+            >
+              0/{{ vehicles|length }}
+            </div>
+          </div>
+          <div id="vehicleWarning" class="text-danger text-center mb-3"></div>
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary btn-lg">Tiếp tục</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Thương hiệu (brand) -->
+  <section id="brand" class="brand">
+    <div class="container">
+      <div class="brand-area">
+        <div class="owl-carousel owl-theme brand-item">
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br1.png') }}" /></a>
+          </div>
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br2.png') }}" /></a>
+          </div>
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br3.png') }}" /></a>
+          </div>
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br4.png') }}" /></a>
+          </div>
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br5.png') }}" /></a>
+          </div>
+          <div class="item">
+            <a href="#"><img src="{{ url_for('static', filename='assets/images/brand/br6.png') }}" /></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog (nếu có) -->
+  <section id="blog" class="blog"></section>
+
+  <!-- Footer -->
+  <footer id="contact" class="contact">
+    <div class="container">
+      <div class="footer-top">
+        <div class="row">
+          <div class="col-md-3 col-sm-6">
+            <div class="single-footer-widget">
+              <div class="footer-logo">
+                <a href="index.html">carvilla</a>
+              </div>
+              <p>
+                Ased do eiusm tempor incidi ut labore et dolore magnaian aliqua. Ut enim ad minim veniam.
+              </p>
+              <div class="footer-contact">
+                <p>info@themesine.com</p>
+                <p>+1 (885) 2563154554</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-2 col-sm-6">
+            <div class="single-footer-widget">
+              <h2>about devloon</h2>
+              <ul>
+                <li><a href="#">about us</a></li>
+                <li><a href="#">career</a></li>
+                <li><a href="#">terms <span>of service</span></a></li>
+                <li><a href="#">privacy policy</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-md-3 col-xs-12">
+            <div class="single-footer-widget">
+              <h2>top brands</h2>
+              <div class="row">
+                <div class="col-md-7 col-xs-6">
+                  <ul>
+                    <li><a href="#">BMW</a></li>
+                    <li><a href="#">lamborghini</a></li>
+                    <li><a href="#">camaro</a></li>
+                    <li><a href="#">audi</a></li>
+                    <li><a href="#">infiniti</a></li>
+                    <li><a href="#">nissan</a></li>
+                  </ul>
+                </div>
+                <div class="col-md-5 col-xs-6">
+                  <ul>
+                    <li><a href="#">ferrari</a></li>
+                    <li><a href="#">porsche</a></li>
+                    <li><a href="#">land rover</a></li>
+                    <li><a href="#">aston martin</a></li>
+                    <li><a href="#">mersedes</a></li>
+                    <li><a href="#">opel</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-offset-1 col-md-3 col-sm-6">
+            <div class="single-footer-widget">
+              <h2>news letter</h2>
+              <div class="footer-newsletter">
+                <p>Subscribe to get latest news update and informations</p>
+              </div>
+              <div class="hm-foot-email">
+                <div class="foot-email-box">
+                  <input type="text" class="form-control" placeholder="Add Email">
+                </div>
+                <div class="foot-email-subscribe">
+                  <span><i class="fa fa-arrow-right"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="row">
+          <div class="col-sm-6">
+            <p>&copy; copyright. designed and developed by <a href="https://www.themesine.com/">themesine</a>.</p>
+          </div>
+          <div class="col-sm-6">
+            <div class="footer-social">
+              <a href="#"><i class="fa fa-facebook"></i></a>	
+              <a href="#"><i class="fa fa-instagram"></i></a>
+              <a href="#"><i class="fa fa-linkedin"></i></a>
+              <a href="#"><i class="fa fa-pinterest-p"></i></a>
+              <a href="#"><i class="fa fa-behance"></i></a>	
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="scroll-Top">
+      <div class="return-to-top">
+        <i 
+          class="fa fa-angle-up" 
+          id="scroll-top" 
+          data-toggle="tooltip" 
+          data-placement="top" 
+          title="" 
+          data-original-title="Back to Top" 
+          aria-hidden="true"
+        ></i>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Include JS files -->
+  <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/bootsnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
+  <!-- JS Libs -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    // Tổng số xe
+    const featuredSection = document.getElementById('featured-cars');
+    const totalVehicles = parseInt(featuredSection.dataset.total, 10);
+
+    // Hàm chọn/xóa chọn thẻ xe
+    function toggleCard(idx) {
+      const card = document.getElementById(`card_${idx}`);
+      const checkbox = document.getElementById(`checkbox_${idx}`);
+      checkbox.checked = !checkbox.checked;
+      card.classList.toggle('selected', checkbox.checked);
+      updateProgress();
+    }
+
+    // Cập nhật thanh tiến trình
+    function updateProgress() {
+      const checkedCount = document.querySelectorAll('input[name="vehicle"]:checked').length;
+      const bar = document.getElementById('vehicleProgress');
+      const warning = document.querySelectorAll('#vehicleWarning')[0];
+      const percent = (checkedCount / totalVehicles) * 100;
+
+      bar.style.width = percent + '%';
+      bar.setAttribute('aria-valuenow', checkedCount);
+      bar.textContent = `${checkedCount}/${totalVehicles}`;
+
+      warning.textContent = checkedCount < 2
+        ? 'Vui lòng chọn ít nhất 2 xe.'
+        : '';
+    }
+
+    // Khi DOM sẵn sàng
+    document.addEventListener('DOMContentLoaded', () => {
+      updateProgress();
+
+      // Đồng bộ chiều cao khung xe
+      const boxes = document.querySelectorAll('.single-featured-cars');
+      let maxHeight = 0;
+      boxes.forEach(box => {
+        maxHeight = Math.max(maxHeight, box.offsetHeight);
+      });
+      boxes.forEach(box => {
+        box.style.height = maxHeight + 'px';
+      });
+    });
+
+    // ========== PHẦN TÌM KIẾM XE ==========
+    document.getElementById('vehicleSearchBtn').addEventListener('click', function() {
+      const query = document.getElementById('vehicleSearchInput').value.trim().toLowerCase();
+      const warningEl = document.getElementById('searchWarning');
+      const grid = document.getElementById('vehicleGrid');
+      const items = Array.from(grid.querySelectorAll('.single-featured-cars-item'));
+
+      // Nếu ô tìm trống, reload trả về thứ tự gốc
+      if (query === '') {
+        warningEl.style.display = 'none';
+        window.location.reload();
+        return;
+      }
+
+      // Tìm các item có data-name chứa query
+      const matching = items.filter(item => item.dataset.name.includes(query));
+      if (matching.length === 0) {
+        // Không tìm thấy
+        warningEl.textContent = 'Không có xe phù hợp.';
+        warningEl.style.display = 'block';
+        return;
+      }
+
+      // Nếu tìm thấy, ẩn cảnh báo và đẩy lên đầu
+      warningEl.style.display = 'none';
+
+      matching.forEach(item => {
+        grid.prepend(item);
+      });
+
+      // Highlight các item tìm được (tuỳ chọn)
+      matching.forEach(item => {
+        item.querySelector('.single-featured-cars').classList.add('border-success');
+      });
+    });
+  </script>
+</body>
+</html>

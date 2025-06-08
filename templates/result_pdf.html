@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* Toàn trang */
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 20px;
+      color: #333;
+    }
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+    h3 {
+      font-size: 1.25rem;
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid #999;
+      padding-bottom: 0.25rem;
+    }
+    /* Thông tin ngày giờ */
+    .timestamp {
+      text-align: right;
+      font-size: 0.875rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    /* Bảng chung */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 1.25rem;
+      page-break-inside: avoid;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 8px 6px;
+      text-align: center;
+    }
+    thead {
+      background-color: #f5f5f5;
+    }
+    th {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    td {
+      font-size: 0.9rem;
+    }
+    /* Xen kẽ màu cho hàng */
+    tbody tr:nth-child(odd) {
+      background-color: #fafafa;
+    }
+    /* Căn lề cho cột tên xe và tiêu chí */
+    .left-align {
+      text-align: left;
+      padding-left: 12px;
+    }
+    /* Chú thích */
+    .footer-note {
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 2rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Tiêu đề chính -->
+  <h2>KẾT QUẢ AHP</h2>
+
+  <!-- Thời gian xuất -->
+  <div class="timestamp">
+    Xuất ngày: {{ now.strftime('%d/%m/%Y') }} | Thời gian: {{ now.strftime('%H:%M:%S') }}
+  </div>
+
+  <!-- Bảng 1: Điểm AHP của các xe -->
+  <h3>1. Điểm AHP của các xe (Tỉ lệ %)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 60%;">Tên xe</th>
+        <th style="width: 40%;">Điểm AHP (%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i, name in enumerate(alt_labels) %}
+      <tr>
+        <td class="left-align">{{ name }}</td>
+        <td>{{ (alt_scores[i] * 100) | round(2) }}%</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Bảng 2: Trọng số tiêu chí -->
+  <h3>2. Trọng số tiêu chí</h3>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 70%;">Tiêu chí</th>
+        <th style="width: 30%;">Trọng số</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for i, crit in enumerate(crit_labels_vn) %}
+      <tr>
+        <td class="left-align">{{ crit }}</td>
+        <td>{{ crit_values[i] | round(4) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <!-- Phần kiểm định nhất quán -->
+  <h3>3. Kiểm định nhất quán</h3>
+  <p style="font-size: 0.95rem; margin-left: 6px;">
+    λ<sub>max</sub>: <strong>{{ lambda_max | round(4) }}</strong>, 
+    CI: <strong>{{ ci | round(4) }}</strong>, 
+    CR: <strong>{{ (cr * 100) | round(2) }}%</strong>
+  </p>
+
+  <!-- Chú thích ở chân trang -->
+  <div class="footer-note">
+    Báo cáo này được tự động sinh ngày {{ now.strftime('%d/%m/%Y') }} lúc {{ now.strftime('%H:%M:%S') }}.<br>
+    AHP Auto Advisor &copy; 2025
+  </div>
+</body>
+</html>

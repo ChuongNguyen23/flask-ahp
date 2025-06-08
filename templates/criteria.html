@@ -1,0 +1,496 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- meta data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- font-family -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+  
+  <title>CarVilla</title>
+
+  <!-- favicon -->
+  <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='assets/logo/favicon.png') }}"/>
+ 
+  <!-- core CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/linearicons.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootsnav.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+  <!-- FontAwesome (load after flaticon.css) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
+<style>
+/* Đẩy toàn bộ nội dung xuống tránh dính header (navbar cao ~70px) */
+body {
+    padding-top: 120px;
+  }
+
+  /* Tạo khoảng cách trước section chính */
+  .card.shadow-sm {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  /* Căn giữa và tăng khoảng cách cho nút tính toán */
+  .card-body form .btn {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Khoảng cách giữa form và chart */
+  .chart-container {
+    margin-top: 50px;
+  }
+
+  /* Nếu bạn dùng .container.my-5 thì đã có padding, nhưng đảm bảo chart cũng có padding */
+  .chart-container h5 {
+    margin-bottom: 20px;
+  }
+
+  /* Navbar giữ nguyên */
+.navbar-default {
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav>li>a {
+  color: #fff !important;
+}
+
+.text-center{
+  margin-top: 20px;
+}
+
+/* Font chung cho toàn trang (nếu muốn) */
+body, .table, .btn, .chart-container {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Cỡ chữ cho tiêu đề biểu đồ */
+.chart-container h5 {
+  font-size: 2.75rem;   /* ví dụ 28px */
+}
+
+/* Cỡ chữ mặc định cho legend và ticks (Chart.js canvas) */
+canvas {
+  /* đảm bảo canvas không bị co cụm */
+  max-width: 100%;
+}
+
+</style>
+</head>
+	
+<body>
+  <!-- Navigation (giữ nguyên) -->
+  <section id="home2" class="welcome-2hero">
+    <div class="top-area">
+      <div class="header-area">
+        <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" 
+             data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="1000">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                <i class="fa fa-bars"></i>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('index') }}">AHP Auto Advisor</a>
+            </div>
+            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+              <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                <li class="scroll active"><a href="#home">Trang chủ</a></li>
+                <li class="scroll"><a href="#service">Dịch vụ</a></li>
+                <li class="scroll"><a href="#featured-cars">Xe nổi bật</a></li>
+                <li class="scroll"><a href="#new-cars">Xe mới</a></li>
+                <li class="scroll"><a href="#brand">Thương hiệu</a></li>
+                <li class="scroll"><a href="#contact">Liên hệ</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </section>
+
+<div class="container my-5">
+  <div class="card shadow-sm">
+    <div class="container"><div class="section-header text-center">
+      <h2>Nhập<span> ma trận so sánh cặp</span></h2>
+    </div>
+    <div class="card-body">
+      <p class="text-center">
+   Các tiêu chí đã chọn: <strong>{{ crits_vn | join(', ') }}</strong><br>
+      </p>
+
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+          <div class="alert alert-danger text-center">
+            {% for msg in messages %}
+              <p>{{ msg }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <form method="POST" action="{{ url_for('criteria_matrix') }}">
+        <div class="table-responsive">
+          <table class="table table-bordered text-center">
+            <thead class="table-secondary">
+              <tr>
+                <th>Tiêu chí</th>
+                {% for label in crits_vn %}
+     <th>{{ label }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in range(crits|length) %}
+                <tr>
+                  <td class="fw-bold">{{ crits_vn[i] }}</td>
+                  {% for j in range(crits|length) %}
+                    {% if i == j %}
+                      <td><input type="number" value="1" readonly class="form-control"></td>
+                    {% elif i < j %}
+                      <td>
+                        <div>
+                          <input type="number" step="any" min="0.111" max="9" name="cell_{{ i }}_{{ j }}" required
+                                 oninput="validateAndMirror(this, 'cell_{{ j }}_{{ i }}', 'err_{{ i }}_{{ j }}')"
+                                 class="form-control">
+                          <div class="invalid-feedback" id="err_{{ i }}_{{ j }}"></div>
+                        </div>
+                      </td>
+                    {% else %}
+                      <td><input type="number" id="cell_{{ i }}_{{ j }}" name="cell_{{ i }}_{{ j }}" readonly class="form-control"></td>
+                    {% endif %}
+                  {% endfor %}
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        
+      
+
+      <!-- Biểu đồ trọng số -->
+      <div class="chart-container">
+        <h5 class="text-center">Trọng số tiêu chí (tạm tính)</h5>
+        <canvas id="critWeightChart" height="140"></canvas>
+      </div>
+      <div class="text-center mt-3">
+          <button type="submit" class="btn btn-primary btn-lg">
+            Tính toán tiêu chí <i class="fa-solid fa-arrow-right"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+		<!--brand strat -->
+		<section id="brand"  class="brand">
+			<div class="container">
+				<div class="brand-area">
+					<div class="owl-carousel owl-theme brand-item">
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br1.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br2.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br3.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br4.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br5.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br6.png') }}" />
+							</a>
+						</div><!--/.item-->
+					</div><!--/.owl-carousel-->
+				</div><!--/.clients-area-->
+
+			</div><!--/.container-->
+
+		</section><!--/brand-->	
+		<!--brand end -->
+
+		<!--blog start -->
+		<section id="blog" class="blog"></section><!--/.blog-->
+		<!--blog end -->
+
+		<!--contact start-->
+		<footer id="contact"  class="contact">
+			<div class="container">
+				<div class="footer-top">
+					<div class="row">
+						<div class="col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<div class="footer-logo">
+									<a href="index.html">carvilla</a>
+								</div>
+								<p>
+									Ased do eiusm tempor incidi ut labore et dolore magnaian aliqua. Ut enim ad minim veniam.
+								</p>
+								<div class="footer-contact">
+									<p>info@themesine.com</p>
+									<p>+1 (885) 2563154554</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-2 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>about devloon</h2>
+								<ul>
+									<li><a href="#">about us</a></li>
+									<li><a href="#">career</a></li>
+									<li><a href="#">terms <span> of service</span></a></li>
+									<li><a href="#">privacy policy</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-3 col-xs-12">
+							<div class="single-footer-widget">
+								<h2>top brands</h2>
+								<div class="row">
+									<div class="col-md-7 col-xs-6">
+										<ul>
+											<li><a href="#">BMW</a></li>
+											<li><a href="#">lamborghini</a></li>
+											<li><a href="#">camaro</a></li>
+											<li><a href="#">audi</a></li>
+											<li><a href="#">infiniti</a></li>
+											<li><a href="#">nissan</a></li>
+										</ul>
+									</div>
+									<div class="col-md-5 col-xs-6">
+										<ul>
+											<li><a href="#">ferrari</a></li>
+											<li><a href="#">porsche</a></li>
+											<li><a href="#">land rover</a></li>
+											<li><a href="#">aston martin</a></li>
+											<li><a href="#">mersedes</a></li>
+											<li><a href="#">opel</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-offset-1 col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>news letter</h2>
+								<div class="footer-newsletter">
+									<p>
+										Subscribe to get latest news  update and informations
+									</p>
+								</div>
+								<div class="hm-foot-email">
+									<div class="foot-email-box">
+										<input type="text" class="form-control" placeholder="Add Email">
+									</div><!--/.foot-email-box-->
+									<div class="foot-email-subscribe">
+										<span><i class="fa fa-arrow-right"></i></span>
+									</div><!--/.foot-email-icon-->
+								</div><!--/.hm-foot-email-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="row">
+						<div class="col-sm-6">
+							<p>
+								&copy; copyright.designed and developed by <a href="https://www.themesine.com/">themesine</a>.
+							</p><!--/p-->
+						</div>
+						<div class="col-sm-6">
+							<div class="footer-social">
+								<a href="#"><i class="fa fa-facebook"></i></a>	
+								<a href="#"><i class="fa fa-instagram"></i></a>
+								<a href="#"><i class="fa fa-linkedin"></i></a>
+								<a href="#"><i class="fa fa-pinterest-p"></i></a>
+								<a href="#"><i class="fa fa-behance"></i></a>	
+							</div>
+						</div>
+					</div>
+				</div><!--/.footer-copyright-->
+			</div><!--/.container-->
+
+			<div id="scroll-Top">
+				<div class="return-to-top">
+					<i class="fa fa-angle-up " id="scroll-top" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to Top" aria-hidden="true"></i>
+				</div>
+				
+			</div><!--/.scroll-Top-->
+			
+        </footer>
+
+
+		
+	 <!-- Include JS files -->
+   <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootsnav.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
+    
+  <!-- JS Libs -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Chèn dữ liệu tiêu chí từ Flask -->
+<script id="crits-data" type="application/json">
+   {{ crits_vn | tojson }}
+</script>
+
+<script>
+  // Đọc danh sách tiêu chí từ JSON trong HTML
+  const crits = JSON.parse(document.getElementById('crits-data').textContent);
+
+  const chartCtx = document.getElementById('critWeightChart').getContext('2d');
+
+  // Tạo biểu đồ
+  // Đặt kích thước biểu đồ
+  let chart = new Chart(chartCtx, {
+  type: 'bar',
+  data: {
+    labels: crits,
+    datasets: [{
+      label: 'Trọng số tiêu chí',
+      data: [],
+    }]
+  },
+  options: {
+    plugins: {
+      legend: {
+        labels: {
+          font: {
+            family: 'Poppins, sans-serif',
+            size: 18    // cỡ chữ legend
+          }
+        }
+      },
+      title: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          font: {
+            family: 'Poppins, sans-serif',
+            size: 18   // cỡ chữ nhãn trục X
+          }
+        }
+      },
+      y: {
+        ticks: {
+          font: {
+            family: 'Poppins, sans-serif',
+            size: 18   // cỡ chữ nhãn trục Y
+          }
+        }
+      }
+    }
+  }
+});
+
+  // Hàm kiểm tra và sao chép giá trị
+  // từ ô này sang ô khác 
+  function validateAndMirror(source, targetId, errorId) {
+    const min = 1/9, max = 9;
+    const val = parseFloat(source.value);
+    const errDiv = document.getElementById(errorId);
+    const target = document.getElementsByName(targetId)[0];
+
+    if (isNaN(val) || val <= 0) {
+      errDiv.textContent = "Giá trị không hợp lệ.";
+      source.classList.add("is-invalid");
+      if (target) target.value = '';
+      return;
+    }
+
+    if (val < min || val > max) {
+      errDiv.textContent = "Nhập số từ 0.111 đến 9.";
+      source.classList.add("is-invalid");
+      if (target) target.value = '';
+      return;
+    }
+
+    errDiv.textContent = "";
+    source.classList.remove("is-invalid");
+    if (target) target.value = (1 / val).toFixed(4);
+
+    updateWeights();
+  }
+
+  function updateWeights() {
+    const n = crits.length;
+    const matrix = Array.from({ length: n }, () => Array(n).fill(1));
+
+    for (let i = 0; i < n; i++) {
+      for (let j = i + 1; j < n; j++) {
+        const name = `cell_${i}_${j}`;
+        const input = document.getElementsByName(name)[0];
+        if (!input || isNaN(parseFloat(input.value))) return;
+        const v = parseFloat(input.value);
+        matrix[i][j] = v;
+        matrix[j][i] = 1 / v;
+      }
+    }
+
+    // Chuẩn hóa ma trận
+    const colSum = Array(n).fill(0);
+    for (let j = 0; j < n; j++) {
+      for (let i = 0; i < n; i++) colSum[j] += matrix[i][j];
+    }
+
+    const norm = matrix.map((row, i) =>
+      row.map((val, j) => val / colSum[j])
+    );
+
+    const weights = norm.map(row => row.reduce((sum, v) => sum + v, 0) / n);
+    chart.data.datasets[0].data = weights;
+    chart.update();
+  }
+
+  document.querySelectorAll('input[type="number"]').forEach(input => {
+    input.addEventListener('input', updateWeights);
+  });
+</script>  
+    </body>
+	
+</html>
+

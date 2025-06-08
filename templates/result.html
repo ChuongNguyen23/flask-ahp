@@ -1,0 +1,464 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- meta data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- font-family -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+  
+  <title>CarVilla</title>
+
+  <!-- favicon -->
+  <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='assets/logo/favicon.png') }}"/>
+ 
+  <!-- core CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/linearicons.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootsnav.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+  <!-- FontAwesome (load after flaticon.css) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+
+
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700" …>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" …>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+    rel="stylesheet">
+ 
+  <style>
+ body, 
+  .card, 
+  h4, 
+  h5, 
+  table, 
+  th, 
+  td, 
+  .btn, 
+  input, 
+  select,
+  .ahp-check, 
+  .ahp-check span,
+  .chart-container {
+    font-family: 'Poppins', sans-serif !important;
+    font-size:    1.75rem               !important;
+  }
+
+  /* Tiêu đề biểu đồ (như bên trang nhập ma trận) */
+  .chart-container h5 {
+    font-size: 1.75rem !important; /* tương đương ~28px */
+  }
+/* Tiêu đề chính */
+.section-header.text-center {
+  margin-bottom: 10px !important; /* Giảm khoảng cách dưới tiêu đề */
+}
+
+.section-header.text-center h2 {
+  margin-top: 0 !important;
+}
+
+/* Dòng mô tả phụ */
+.section-header.text-center p {
+  margin-bottom: 5px !important;
+  font-size: 16px !important;
+}
+
+/* Đẩy toàn bộ nội dung xuống tránh dính header (navbar cao ~70px) */
+body {
+    padding-top: 150px;
+  }
+
+  /* Tạo khoảng cách trước section chính */
+  .card.shadow-sm {
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  /* Căn giữa và tăng khoảng cách cho nút tính toán */
+  .card-body form .btn {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Khoảng cách giữa form và chart */
+  .chart-container {
+    margin-top: 50px;
+  }
+
+  /* Nếu bạn dùng .container.my-5 thì đã có padding, nhưng đảm bảo chart cũng có padding */
+  .chart-container h5 {
+    margin-bottom: 20px;
+  }
+
+  /* Navbar giữ nguyên */
+.navbar-default {
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav>li>a {
+  color: #fff !important;
+}
+
+  </style>
+</head>
+	
+<body>
+  <!-- Navigation (giữ nguyên) -->
+  <section id="home2" class="welcome-2hero">
+    <div class="top-area">
+      <div class="header-area">
+        <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" 
+             data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="1000">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                <i class="fa fa-bars"></i>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('index') }}">AHP Auto Advisor</a>
+            </div>
+            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+              <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                <li class="scroll active"><a href="#home">Trang chủ</a></li>
+                <li class="scroll"><a href="#service">Dịch vụ</a></li>
+                <li class="scroll"><a href="#featured-cars">Xe nổi bật</a></li>
+                <li class="scroll"><a href="#new-cars">Xe mới</a></li>
+                <li class="scroll"><a href="#brand">Thương hiệu</a></li>
+                <li class="scroll"><a href="#contact">Liên hệ</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </section>
+
+<div class="container my-5">
+  <div class="card shadow-lg">
+    <div class="container"><div class="section-header text-center">
+      <h2>Kết<span> quả tính toán</span></h2>
+    </div>
+    <div class="card-body">
+      <!-- Nhúng JSON Data -->
+      <script id="chart-data" type="application/json">
+{
+  "altLabels":      {{ alt_labels      | tojson }},
+  "altScores":      {{ alt_scores      | tojson }},
+  "critLabelsVN":   {{ crit_labels_vn  | tojson }},
+  "critValues":     {{ crit_values     | tojson }}
+}
+</script>
+
+
+      <!-- Biểu đồ AHP -->
+    <div class="chart-container">
+      <h5>Điểm AHP của các xe</h5>
+      <canvas id="scoreChart"></canvas>
+    </div>
+
+    <!-- Bảng kết quả -->
+    <table class="table table-striped">
+      <thead><tr><th>Tên xe</th><th>Điểm (%)</th></tr></thead>
+      <tbody>
+        {% for item in results %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ (item.score*100)|round(2) }}%</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Biểu đồ trọng số -->
+    <div class="chart-container">
+      <h5>Trọng số tiêu chí</h5>
+      <canvas id="critChart"></canvas>
+    </div>
+  </div>
+      <hr>
+      <div class="ahp-check mb-3">
+        <p><span>λ max:</span> {{ lambda_max|round(4) }}</p>
+        <p><span>Chỉ số nhất quán (CI):</span> {{ ci|round(4) }}</p>
+        <p><span>Tỷ lệ nhất quán (CR):</span>
+          <span class="{% if cr >= 0.1 %}text-danger{% else %}text-success{% endif %}">
+            {{ (cr * 100)|round(2) }}%
+          </span>
+        </p>
+        {% if cr >= 0.1 %}
+          <div class="alert alert-warning">
+            ⚠️ CR ≥ 10% – Ma trận không nhất quán. Vui lòng kiểm tra lại!
+          </div>
+        {% else %}
+          <div class="alert alert-success">
+            ✅ CR < 10% – Ma trận đạt yêu cầu.
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="text-center">
+        <a href="{{ url_for('matrix_display') }}" class="btn btn-info">
+          <i class="fa-solid fa-table"></i> Xem chi tiết ma trận
+        </a>
+        
+  <!-- 2) Xuất Excel -->
+  <a href="{{ url_for('export_excel') }}" class="btn btn-success">
+    <i class="fa-solid fa-file-excel me-1"></i> Xuất Excel
+  </a>
+
+  <!-- 3) Xuất PDF -->
+  <a href="{{ url_for('export_pdf') }}" class="btn btn-danger">
+    <i class="fa-solid fa-file-pdf me-1"></i> Xuất PDF
+  </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+		<!--brand strat -->
+		<section id="brand"  class="brand">
+			<div class="container">
+				<div class="brand-area">
+					<div class="owl-carousel owl-theme brand-item">
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br1.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br2.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br3.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br4.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br5.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br6.png') }}" />
+							</a>
+						</div><!--/.item-->
+					</div><!--/.owl-carousel-->
+				</div><!--/.clients-area-->
+
+			</div><!--/.container-->
+
+		</section><!--/brand-->	
+		<!--brand end -->
+
+		<!--blog start -->
+		<section id="blog" class="blog"></section><!--/.blog-->
+		<!--blog end -->
+
+		<!--contact start-->
+		<footer id="contact"  class="contact">
+			<div class="container">
+				<div class="footer-top">
+					<div class="row">
+						<div class="col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<div class="footer-logo">
+									<a href="index.html">carvilla</a>
+								</div>
+								<p>
+									Ased do eiusm tempor incidi ut labore et dolore magnaian aliqua. Ut enim ad minim veniam.
+								</p>
+								<div class="footer-contact">
+									<p>info@themesine.com</p>
+									<p>+1 (885) 2563154554</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-2 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>about devloon</h2>
+								<ul>
+									<li><a href="#">about us</a></li>
+									<li><a href="#">career</a></li>
+									<li><a href="#">terms <span> of service</span></a></li>
+									<li><a href="#">privacy policy</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-3 col-xs-12">
+							<div class="single-footer-widget">
+								<h2>top brands</h2>
+								<div class="row">
+									<div class="col-md-7 col-xs-6">
+										<ul>
+											<li><a href="#">BMW</a></li>
+											<li><a href="#">lamborghini</a></li>
+											<li><a href="#">camaro</a></li>
+											<li><a href="#">audi</a></li>
+											<li><a href="#">infiniti</a></li>
+											<li><a href="#">nissan</a></li>
+										</ul>
+									</div>
+									<div class="col-md-5 col-xs-6">
+										<ul>
+											<li><a href="#">ferrari</a></li>
+											<li><a href="#">porsche</a></li>
+											<li><a href="#">land rover</a></li>
+											<li><a href="#">aston martin</a></li>
+											<li><a href="#">mersedes</a></li>
+											<li><a href="#">opel</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-offset-1 col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>news letter</h2>
+								<div class="footer-newsletter">
+									<p>
+										Subscribe to get latest news  update and informations
+									</p>
+								</div>
+								<div class="hm-foot-email">
+									<div class="foot-email-box">
+										<input type="text" class="form-control" placeholder="Add Email">
+									</div><!--/.foot-email-box-->
+									<div class="foot-email-subscribe">
+										<span><i class="fa fa-arrow-right"></i></span>
+									</div><!--/.foot-email-icon-->
+								</div><!--/.hm-foot-email-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="row">
+						<div class="col-sm-6">
+							<p>
+								&copy; copyright.designed and developed by <a href="https://www.themesine.com/">themesine</a>.
+							</p><!--/p-->
+						</div>
+						<div class="col-sm-6">
+							<div class="footer-social">
+								<a href="#"><i class="fa fa-facebook"></i></a>	
+								<a href="#"><i class="fa fa-instagram"></i></a>
+								<a href="#"><i class="fa fa-linkedin"></i></a>
+								<a href="#"><i class="fa fa-pinterest-p"></i></a>
+								<a href="#"><i class="fa fa-behance"></i></a>	
+							</div>
+						</div>
+					</div>
+				</div><!--/.footer-copyright-->
+			</div><!--/.container-->
+
+			<div id="scroll-Top">
+				<div class="return-to-top">
+					<i class="fa fa-angle-up " id="scroll-top" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to Top" aria-hidden="true"></i>
+				</div>
+				
+			</div><!--/.scroll-Top-->
+			
+        </footer><!--/.contact-->
+		<!--contact end-->
+
+
+		
+	 <!-- Include JS files -->
+   <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootsnav.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
+    
+  <!-- JS Libs -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const cfg = JSON.parse(document.getElementById('chart-data').textContent);
+
+  // Chart Điểm AHP
+  new Chart(document.getElementById('scoreChart'), {
+    type: 'bar',
+    data: {
+      labels: cfg.altLabels,   // <-- dùng altLabels (tên xe)
+      datasets: [{
+        label: 'Điểm AHP (%)',
+        data: cfg.altScores.map(v => +(v*100).toFixed(2)),
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { labels: { font: { family:'Poppins', size:18 } } }
+      },
+      scales: {
+        x: { ticks: { font: { family:'Poppins', size:18 } } },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: v => v + '%',
+            font: { family:'Poppins', size:18 }
+          }
+        }
+      }
+    }
+  });
+
+  // Chart Trọng số tiêu chí
+  new Chart(document.getElementById('critChart'), {
+    type: 'bar',
+    data: {
+      labels: cfg.critLabelsVN,  // <-- dùng critLabelsVN (tiếng Việt)
+      datasets: [{
+        label: 'Trọng số tiêu chí',
+        data: cfg.critValues,
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { labels: { font: { family:'Poppins', size:18 } } }
+      },
+      scales: {
+        x: { ticks: { font: { family:'Poppins', size:18 } } },
+        y: { 
+          beginAtZero: true, 
+          ticks: { font: { family:'Poppins', size:18 } } 
+        }
+      }
+    }
+  });
+</script>
+
+
+    </body>
+	
+</html>
+

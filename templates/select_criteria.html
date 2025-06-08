@@ -1,0 +1,417 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <!-- meta data -->
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- font-family -->
+  <link href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Rufina:400,700" rel="stylesheet">
+  
+  <title>CarVilla</title>
+
+  <!-- favicon -->
+  <link rel="shortcut icon" type="image/icon" href="{{ url_for('static', filename='assets/logo/favicon.png') }}"/>
+ 
+  <!-- core CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/font-awesome.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/linearicons.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/animate.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.carousel.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/owl.theme.default.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootstrap.min.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/bootsnav.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/responsive.css') }}">
+
+  <!-- FontAwesome (load after flaticon.css) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/flaticon.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<style>
+ /* Card dịch vụ */
+.single-service-item {
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #f8f8f8;
+  text-align: center;
+  min-height: 300px;
+}
+.single-service-item.active {
+  background-color: #4054b2;
+  color: #fff;
+}
+.single-service-item.active .single-service-icon i {
+  color: #fff;
+}
+
+/* Icon wrapper */
+.single-service-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 80px;
+  margin-bottom: 15px;
+}
+
+/* Icon chính */
+.single-service-icon i {
+  font-size: 3.5rem !important; /* Khoảng 56px */
+  color: #333;
+  line-height: 1;
+}
+
+/* Navbar giữ nguyên */
+.navbar-default {
+  background-color: #000 !important;
+  border-color: #000 !important;
+}
+.navbar-default .navbar-brand,
+.navbar-default .navbar-nav>li>a {
+  color: #fff !important;
+}
+
+
+
+
+#service {
+  padding-top: 150px !important; /* Giảm khoảng cách với header */
+}
+/* Tiêu đề chính */
+.section-header.text-center {
+  margin-bottom: 10px !important; /* Giảm khoảng cách dưới tiêu đề */
+}
+
+.section-header.text-center h2 {
+  margin-top: 0 !important;
+}
+
+/* Dòng mô tả phụ */
+.section-header.text-center p {
+  margin-bottom: 5px !important;
+  font-size: 16px !important;
+}
+
+/* Cảnh báo */
+#warning {
+  margin: 5px 0 15px !important; /* Trên 5px - dưới 15px */
+  padding: 8px !important;
+}
+
+/* Card tiêu chí */
+.single-service-item {
+  margin-top: 10px !important;
+  min-height: 280px !important; /* Giảm chiều cao thẻ */
+}
+
+</style>
+</head>
+	
+<body>
+  <!-- Navigation (giữ nguyên) -->
+  <section id="home2" class="welcome-2hero">
+    <div class="top-area">
+      <div class="header-area">
+        <nav class="navbar navbar-default bootsnav navbar-sticky navbar-scrollspy" 
+             data-minus-value-desktop="70" data-minus-value-mobile="55" data-speed="1000">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                <i class="fa fa-bars"></i>
+              </button>
+              <a class="navbar-brand" href="{{ url_for('index') }}">AHP Auto Advisor</a>
+            </div>
+            <div class="collapse navbar-collapse menu-ui-design" id="navbar-menu">
+              <ul class="nav navbar-nav navbar-right" data-in="fadeInDown" data-out="fadeOutUp">
+                <li class="scroll active"><a href="#home">Trang chủ</a></li>
+                <li class="scroll"><a href="#service">Dịch vụ</a></li>
+                <li class="scroll"><a href="#featured-cars">Xe nổi bật</a></li>
+                <li class="scroll"><a href="#new-cars">Xe mới</a></li>
+                <li class="scroll"><a href="#brand">Thương hiệu</a></li>
+                <li class="scroll"><a href="#contact">Liên hệ</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+      <div class="clearfix"></div>
+    </div>
+  </section>
+
+  <!-- Service / Select Criteria -->
+  <section id="service" class="service">
+    <div class="container">
+      <div class="service-content">
+        <div class="container"><div class="section-header text-center">
+      <h2>Danh<span> sách các tiêu chí</span></h2>
+      <p>Chọn tiêu chí <span>cho quá trình đánh giá </span></p>
+    </div>
+        <!-- Warning -->
+        <div id="warning" class="text-danger text-center mb-3"></div>
+        
+
+        <form method="POST" action="{{ url_for('save_criteria') }}">
+          <div class="row">
+            {% for crit in criteria_options %}
+            <div class="col-md-4 col-sm-6 mb-4 d-flex">
+              <div class="single-service-item flex-fill"
+                   onclick="toggleCard('cb_{{ crit.value }}','item_{{ crit.value }}')"
+                   id="item_{{ crit.value }}">
+            
+                <input type="checkbox" name="criteria" value="{{ crit.value }}" id="cb_{{ crit.value }}" style="display:none;">
+            
+                <!-- THÊM THẺ BAO ICON -->
+                <div class="single-service-icon">
+                  <i class="{{ icon_map.get(crit.value, 'flaticon-car') }}"></i>
+                </div>
+            
+                <h2><a href="#">{{ crit.display }}</a></h2>
+                <p>{{ crit.mo_ta }}</p>
+              </div>
+            </div>
+            
+            {% endfor %}
+          </div>
+<!-- Progress bar -->
+<div class="progress mb-4">
+  <div id="selProgress" class="progress-bar" role="progressbar"
+       style="width: 0%;" aria-valuemin="0" aria-valuemax="7">0/7</div>
+</div>
+          <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary btn-lg">Tiếp tục</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Các section khác giữ nguyên ... -->
+
+  <!-- JS -->
+  <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/bootsnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+  <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
+
+  <script>
+    // Toggle card + validate selection
+    function toggleCard(cbId, itemId) {
+      const cb = document.getElementById(cbId),
+            card = document.getElementById(itemId);
+      cb.checked = !cb.checked;
+      card.classList.toggle('active', cb.checked);
+      validateSelection();
+    }
+    function validateSelection() {
+      const checked = document.querySelectorAll('input[name="criteria"]:checked').length;
+      const warn = document.getElementById('warning'),
+            bar  = document.getElementById('selProgress');
+      warn.textContent = checked < 2
+                       ? 'Vui lòng chọn ít nhất 2 tiêu chí.'
+                       : (checked > 7
+                          ? 'Chỉ được chọn tối đa 7 tiêu chí.'
+                          : '');
+      const pct = Math.min((checked/7)*100, 100);
+      bar.style.width = pct + '%';
+      bar.textContent = `${checked}/7`;
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('input[name="criteria"]')
+              .forEach(cb=>cb.addEventListener('change', validateSelection));
+      validateSelection();
+    });
+
+    // Equalize heights
+    function equalizeCardHeights() {
+      const cards = document.querySelectorAll('.single-service-item'),
+            heights = Array.from(cards).map(c=>{c.style.height='auto';return c.offsetHeight;});
+      const maxH = Math.max(...heights);
+      cards.forEach(c=>c.style.height = maxH+'px');
+    }
+    window.addEventListener('load', equalizeCardHeights);
+    window.addEventListener('resize', equalizeCardHeights);
+  </script>
+
+		<!--brand strat -->
+		<section id="brand"  class="brand">
+			<div class="container">
+				<div class="brand-area">
+					<div class="owl-carousel owl-theme brand-item">
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br1.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br2.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br3.png') }}" />
+							</a>
+						</div><!--/.item-->
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br4.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br5.png') }}" />
+							</a>
+						</div><!--/.item-->
+
+						<div class="item">
+							<a href="#">
+								<img src="{{ url_for('static', filename='assets/images/brand/br6.png') }}" />
+							</a>
+						</div><!--/.item-->
+					</div><!--/.owl-carousel-->
+				</div><!--/.clients-area-->
+
+			</div><!--/.container-->
+
+		</section><!--/brand-->	
+		<!--brand end -->
+
+		<!--blog start -->
+		<section id="blog" class="blog"></section><!--/.blog-->
+		<!--blog end -->
+
+		<!--contact start-->
+		<footer id="contact"  class="contact">
+			<div class="container">
+				<div class="footer-top">
+					<div class="row">
+						<div class="col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<div class="footer-logo">
+									<a href="index.html">carvilla</a>
+								</div>
+								<p>
+									Ased do eiusm tempor incidi ut labore et dolore magnaian aliqua. Ut enim ad minim veniam.
+								</p>
+								<div class="footer-contact">
+									<p>info@themesine.com</p>
+									<p>+1 (885) 2563154554</p>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-2 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>about devloon</h2>
+								<ul>
+									<li><a href="#">about us</a></li>
+									<li><a href="#">career</a></li>
+									<li><a href="#">terms <span> of service</span></a></li>
+									<li><a href="#">privacy policy</a></li>
+								</ul>
+							</div>
+						</div>
+						<div class="col-md-3 col-xs-12">
+							<div class="single-footer-widget">
+								<h2>top brands</h2>
+								<div class="row">
+									<div class="col-md-7 col-xs-6">
+										<ul>
+											<li><a href="#">BMW</a></li>
+											<li><a href="#">lamborghini</a></li>
+											<li><a href="#">camaro</a></li>
+											<li><a href="#">audi</a></li>
+											<li><a href="#">infiniti</a></li>
+											<li><a href="#">nissan</a></li>
+										</ul>
+									</div>
+									<div class="col-md-5 col-xs-6">
+										<ul>
+											<li><a href="#">ferrari</a></li>
+											<li><a href="#">porsche</a></li>
+											<li><a href="#">land rover</a></li>
+											<li><a href="#">aston martin</a></li>
+											<li><a href="#">mersedes</a></li>
+											<li><a href="#">opel</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-offset-1 col-md-3 col-sm-6">
+							<div class="single-footer-widget">
+								<h2>news letter</h2>
+								<div class="footer-newsletter">
+									<p>
+										Subscribe to get latest news  update and informations
+									</p>
+								</div>
+								<div class="hm-foot-email">
+									<div class="foot-email-box">
+										<input type="text" class="form-control" placeholder="Add Email">
+									</div><!--/.foot-email-box-->
+									<div class="foot-email-subscribe">
+										<span><i class="fa fa-arrow-right"></i></span>
+									</div><!--/.foot-email-icon-->
+								</div><!--/.hm-foot-email-->
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="footer-copyright">
+					<div class="row">
+						<div class="col-sm-6">
+							<p>
+								&copy; copyright.designed and developed by <a href="https://www.themesine.com/">themesine</a>.
+							</p><!--/p-->
+						</div>
+						<div class="col-sm-6">
+							<div class="footer-social">
+								<a href="#"><i class="fa fa-facebook"></i></a>	
+								<a href="#"><i class="fa fa-instagram"></i></a>
+								<a href="#"><i class="fa fa-linkedin"></i></a>
+								<a href="#"><i class="fa fa-pinterest-p"></i></a>
+								<a href="#"><i class="fa fa-behance"></i></a>	
+							</div>
+						</div>
+					</div>
+				</div><!--/.footer-copyright-->
+			</div><!--/.container-->
+
+			<div id="scroll-Top">
+				<div class="return-to-top">
+					<i class="fa fa-angle-up " id="scroll-top" data-toggle="tooltip" data-placement="top" title="" data-original-title="Back to Top" aria-hidden="true"></i>
+				</div>
+				
+			</div><!--/.scroll-Top-->
+			
+        </footer><!--/.contact-->
+		<!--contact end-->
+
+
+		
+	 <!-- Include JS files -->
+   <script src="{{ url_for('static', filename='assets/js/jquery.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootstrap.min.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/bootsnav.js') }}"></script>
+   <script src="{{ url_for('static', filename='assets/js/owl.carousel.min.js') }}"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+   <script src="{{ url_for('static', filename='assets/js/custom.js') }}"></script>
+       
+    </body>
+	
+</html>
+
