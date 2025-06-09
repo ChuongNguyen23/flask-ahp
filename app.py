@@ -40,11 +40,13 @@ def get_db_connection():
         port     = result.port,
         sslmode  = 'require'
     )
-    
-    # Đảm bảo search_path là public
-    cur = conn.cursor()
-    cur.execute("SET search_path TO public;")
+
+    # 👇 THÊM search_path = public
+    with conn.cursor() as cur:
+        cur.execute("SET search_path TO public;")
+
     return conn
+
 
 
 
