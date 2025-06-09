@@ -23,9 +23,10 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # DATABASE: Kết nối đến PostgreSQL
 # -------------------------------
 def get_db_connection():
-    url = 'postgresql://ahp_db:cfhWQAw8lQC8H8kYPhoPBikl1ZN2MQfr@dpg-d13di4p5pdvs73dl3fig-a/ahp_db_pqhn'
+    url = os.environ.get('postgresql://ahp_db:cfhWQAw8lQC8H8kYPhoPBikl1ZN2MQfr@dpg-d13di4p5pdvs73dl3fig-a/ahp_db_pqhn')
+    if not url:
+        raise RuntimeError("DATABASE_URL is not set")
     result = urllib.parse.urlparse(url)
-
     conn = psycopg2.connect(
         dbname=result.path[1:],
         user=result.username,
@@ -34,13 +35,9 @@ def get_db_connection():
         port=result.port,
         sslmode='require'
     )
-
-    # SET SCHEMA mặc định là public để không phải viết public.xe
-    cur = conn.cursor()
-    cur.execute('SET search_path TO public;')
-    cur.close()
-
+    conn.cursor().execute('SET search_path TO public;')
     return conn
+
 
 # -------------------------------
 # Truy vấn cấu hình tiêu chí từ bảng criteria_config
