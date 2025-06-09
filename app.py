@@ -21,13 +21,12 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # -------------------------------
 def get_db_connection():
     conn = psycopg2.connect(
-        database='ahp_db',      # Thay bằng tên database của bạn
-        user='postgres',        # Thay bằng tên user của bạn
-        password='123',         # Thay bằng mật khẩu của bạn
+        database='ahp_db',     
+        user='ahp_db_user',        
+        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',   
         host='dpg-d12qec15pdvs73d1e680-a',
         port='5432',
         dbname='ahp_db',
-        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',
         sslmode='require'
     )
     return conn
