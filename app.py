@@ -27,16 +27,21 @@ def get_db_connection():
     if not url:
         raise RuntimeError("DATABASE_URL is not set")
     result = urllib.parse.urlparse(url)
+
     conn = psycopg2.connect(
-        dbname=result.path[1:],
-        user=result.username,
-        password=result.password,
-        host=result.hostname,
-        port=result.port,
-        sslmode='require'
+        dbname    = result.path[1:],
+        user      = result.username,
+        password  = result.password,
+        host      = result.hostname,
+        port      = result.port,
+        sslmode   = 'require'     # hoặc 'prefer' tuỳ bạn
     )
-    conn.cursor().execute('SET search_path TO public;')
+
+    cur = conn.cursor()
+    cur.execute('SET search_path TO public;')
+    cur.close()
     return conn
+
 
 
 # -------------------------------
