@@ -58,7 +58,7 @@ def get_criteria_config():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT key, display, table_name, field_name, is_cost FROM criteria_config ORDER BY id;")
+        cur.execute("SELECT key, display, table_name, field_name, is_cost FROM public.criteria_config ORDER BY id;")
         rows = cur.fetchall()
         conn.close()
         config = { row[0]: {'display': row[1], 'table': row[2], 'field': row[3], 'is_cost': row[4]} for row in rows }
@@ -81,7 +81,7 @@ def get_criteria_options():
         # Join bảng cấu hình với bảng tiêu chí để lấy mô tả
         cur.execute("""
             SELECT cfg.key, cfg.display, tc.mo_ta
-            FROM criteria_config AS cfg
+            FROM public.criteria_config AS cfg
             JOIN tieu_chi AS tc
               ON cfg.key = tc.ten
             ORDER BY cfg.id;
@@ -220,7 +220,7 @@ def filter_vehicles():
             cur = conn.cursor()
             cur.execute("SELECT DISTINCT loai_xe FROM public.xe ORDER BY loai_xe;")
             loai_xe_list = [row[0] for row in cur.fetchall()]
-            cur.execute("SELECT DISTINCT phan_khuc, loai_xe FROM phan_khuc_loai_xe;")
+            cur.execute("SELECT DISTINCT phan_khuc, loai_xe FROM public.phan_khuc_loai_xe;")
             rows = cur.fetchall()
             segments = list(set([row[0] for row in rows]))
             segment_loai = {row[0]: row[1] for row in rows}
@@ -1005,7 +1005,7 @@ def history():
     try:
         conn = get_db_connection()
         cur = conn.cursor()
-        cur.execute("SELECT id, calc_time, vehicles, criteria, crit_weights, results FROM calculation_history ORDER BY calc_time DESC;")
+        cur.execute("SELECT id, calc_time, vehicles, criteria, crit_weights, results FROM public.calculation_history ORDER BY calc_time DESC;")
         rows = cur.fetchall()
         conn.close()
         history_list = []
