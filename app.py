@@ -26,7 +26,6 @@ def get_db_connection():
         password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',   
         host='dpg-d12qec15pdvs73d1e680-a',
         port='5432',
-        dbname='ahp_db',
         sslmode='require'
     )
     return conn
