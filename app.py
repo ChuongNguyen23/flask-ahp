@@ -15,6 +15,10 @@ import psycopg2.extras
 from datetime import datetime
 import urllib.parse
 
+# In DATABASE_URL ra console để Render Logs hiển thị
+db_url = os.environ.get('DATABASE_URL')
+print(">>> DATABASE_URL on Render:", db_url)
+
 app = Flask(__name__)
 app.jinja_env.globals.update(enumerate=enumerate)
 app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
@@ -23,7 +27,7 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # DATABASE: Kết nối đến PostgreSQL
 # -------------------------------
 def get_db_connection():
-    url = os.environ.get('postgresql://ahp_db:cfhWQAw8lQC8H8kYPhoPBikl1ZN2MQfr@dpg-d13di4p5pdvs73dl3fig-a/ahp_db_pqhn')
+    url = os.environ.get('DATABASE_URL')
     if not url:
         raise RuntimeError("DATABASE_URL is not set")
     result = urllib.parse.urlparse(url)
