@@ -38,9 +38,12 @@ def get_db_connection():
         password = result.password,
         host     = result.hostname,
         port     = result.port,
-        sslmode  = 'require',
-        options  = '-c search_path=public'
+        sslmode  = 'require'
     )
+    
+    # Đảm bảo search_path là public
+    cur = conn.cursor()
+    cur.execute("SET search_path TO public;")
     return conn
 
 
