@@ -172,14 +172,14 @@ def filter_vehicles():
             if session.get('selected_loai'):
                 cur.execute("""
                     SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-                    FROM xe
+                    FROM public.xe
                     WHERE loai_xe = ANY(%s) AND loai_nl = ANY(%s)
                     ORDER BY ten_xe;
                 """, (session['selected_loai'], session['energies']))
             else:
                 cur.execute("""
                     SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-                    FROM xe
+                    FROM public.xe
                     WHERE phan_khuc = ANY(%s) AND loai_nl = ANY(%s)
                     ORDER BY ten_xe;
                 """, (session['segments'], session['energies']))
@@ -213,13 +213,13 @@ def filter_vehicles():
         try:
             conn = get_db_connection()
             cur = conn.cursor()
-            cur.execute("SELECT DISTINCT loai_xe FROM xe ORDER BY loai_xe;")
+            cur.execute("SELECT DISTINCT loai_xe FROM public.xe ORDER BY loai_xe;")
             loai_xe_list = [row[0] for row in cur.fetchall()]
             cur.execute("SELECT DISTINCT phan_khuc, loai_xe FROM phan_khuc_loai_xe;")
             rows = cur.fetchall()
             segments = list(set([row[0] for row in rows]))
             segment_loai = {row[0]: row[1] for row in rows}
-            cur.execute("SELECT DISTINCT loai_nl FROM xe;")
+            cur.execute("SELECT DISTINCT loai_nl FROM public.xe;")
             energies = [row[0] for row in cur.fetchall()]
             conn.close()
         except Exception as e:
@@ -272,7 +272,7 @@ def select_all_vehicles():
         cur = conn.cursor()
         cur.execute("""
             SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-            FROM xe
+            FROM public.xe
             ORDER BY ten_xe;
         """)
         rows = cur.fetchall()
