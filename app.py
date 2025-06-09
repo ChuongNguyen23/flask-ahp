@@ -21,11 +21,14 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # -------------------------------
 def get_db_connection():
     conn = psycopg2.connect(
-        database='ahp_db',     
-        user='ahp_db_user',        
-        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',   
+        database='ahp_db',      # Thay bằng tên database của bạn
+        user='postgres',        # Thay bằng tên user của bạn
+        password='123',         # Thay bằng mật khẩu của bạn
         host='dpg-d12qec15pdvs73d1e680-a',
         port='5432',
+        dbname='ahp_db',
+        user='ahp_db_user',
+        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',
         sslmode='require'
     )
     return conn
@@ -123,14 +126,14 @@ def save_calculation_history(vehicles, criteria, crit_weights, results, matrices
         flash("Lỗi lưu lịch sử tính toán: " + str(e))
 
 # -------------------------------
-# ROUTE: Trang chủ -> chuyển hướng sang lọc xe
+# ROUTE: Trang chủ -> chuyển hướng sang lọc public.xe
 # -------------------------------
 @app.route('/')
 def index():
     return redirect(url_for('filter_vehicles'))
 
 # -------------------------------
-# ROUTE: Lọc xe theo loại xe, phân khúc và loại năng lượng
+# ROUTE: Lọc public.xe theo loại public.xe, phân khúc và loại năng lượng
 # -------------------------------
 @app.route('/filter', methods=['GET', 'POST'])
 def filter_vehicles():
@@ -140,7 +143,7 @@ def filter_vehicles():
         selected_loai = request.form.getlist('loai_xe')
 
         if not selected_segments and not selected_loai:
-            flash("Vui lòng chọn ít nhất 1 phân khúc hoặc 1 loại xe.")
+            flash("Vui lòng chọn ít nhất 1 phân khúc hoặc 1 loại public.xe.")
             return redirect(url_for('filter_vehicles'))
         if not selected_energies:
             flash("Vui lòng chọn ít nhất 1 loại năng lượng.")
@@ -157,25 +160,25 @@ def filter_vehicles():
             if session.get('selected_loai'):
                 cur.execute("""
                     SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-                    FROM xe
+                    FROM public.xe
                     WHERE loai_xe = ANY(%s) AND loai_nl = ANY(%s)
                     ORDER BY ten_xe;
                 """, (session['selected_loai'], session['energies']))
             else:
                 cur.execute("""
                     SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-                    FROM xe
+                    FROM public.xe
                     WHERE phan_khuc = ANY(%s) AND loai_nl = ANY(%s)
                     ORDER BY ten_xe;
                 """, (session['segments'], session['energies']))
             rows = cur.fetchall()
             conn.close()
         except Exception as e:
-            flash("Lỗi truy xuất dữ liệu xe: " + str(e))
+            flash("Lỗi truy xuất dữ liệu public.xe: " + str(e))
             return redirect(url_for('filter_vehicles'))
 
         if not rows:
-            flash("Không có xe nào thỏa mãn điều kiện lọc.")
+            flash("Không có public.xe nào thỏa mãn điều kiện lọc.")
             return redirect(url_for('filter_vehicles'))
 
         vehicles = [
@@ -198,17 +201,17 @@ def filter_vehicles():
         try:
             conn = get_db_connection()
             cur = conn.cursor()
-            cur.execute("SELECT DISTINCT loai_xe FROM xe ORDER BY loai_xe;")
+            cur.execute("SELECT DISTINCT loai_xe FROM public.xe ORDER BY loai_xe;")
             loai_xe_list = [row[0] for row in cur.fetchall()]
             cur.execute("SELECT DISTINCT phan_khuc, loai_xe FROM phan_khuc_loai_xe;")
             rows = cur.fetchall()
             segments = list(set([row[0] for row in rows]))
             segment_loai = {row[0]: row[1] for row in rows}
-            cur.execute("SELECT DISTINCT loai_nl FROM xe;")
+            cur.execute("SELECT DISTINCT loai_nl FROM public.xe;")
             energies = [row[0] for row in cur.fetchall()]
             conn.close()
         except Exception as e:
-            flash("Lỗi truy xuất dữ liệu xe: " + str(e))
+            flash("Lỗi truy xuất dữ liệu public.xe: " + str(e))
             loai_xe_list, segment_loai, segments, energies = [], {}, [], []
 
         return render_template(
@@ -218,37 +221,37 @@ def filter_vehicles():
   energies=energies,
   segment_loai=segment_loai,
   loai_xe_descriptions={
-    'Coupe': 'là dòng xe thể thao mang phong cách thanh lịch và quyến rũ, thường được thiết kế với hai cửa, mái che cố định và dáng lưng thấp, tạo đường nét mượt mà từ đầu đến đuôi xe. Đặc trưng nhất của coupe là phần nóc xe ngắn, cửa sổ hẹp và khoang lái gọn gàng, thường chỉ dành cho 2–4 hành khách. Kiểu dáng này nhấn mạnh vào trải nghiệm lái linh hoạt, động cơ mạnh mẽ và khả năng bám đường ổn định. Một số mẫu coupe hiện đại như BMW 4 Series hay Audi A5 thậm chí có phiên bản bốn cửa nhưng vẫn giữ nguyên tỷ lệ thấp và dáng dốc phía sau. Coupe phù hợp với người yêu tốc độ, ưa phong cách cá tính và không quá đề cao không gian rộng rãi. Tuy hạn chế về khoang hành lý và chỗ ngồi phía sau, coupe lại tỏa sáng ở thiết kế đậm chất nghệ thuật và cảm giác lái phấn khích.',
-    'Crossover (CUV)': 'là sự kết hợp giữa SUV và sedan, sở hữu khung gầm xe con nhưng được nâng cao để tăng khả năng di chuyển trên nhiều địa hình. Điểm nhận diện rõ nhất là dáng đứng cao, khoang lái rộng và gầm xe vừa phải, giúp tầm nhìn lái tốt hơn sedan truyền thống. Crossover như Toyota RAV4 hay Honda CR-V thường có hệ dẫn động cầu trước (FWD) hoặc hai cầu (AWD), cân bằng giữa tiết kiệm nhiên liệu và tính đa dụng. Nội thất được tối ưu cho gia đình với hàng ghế gập linh hoạt, cửa hậu rộng và công nghệ an toàn hiện đại. Khác với SUV cỡ lớn, crossover nhẹ nhàng hơn, phù hợp với đô thị nhưng vẫn đủ sức “xông pha” trên đường trơn trượt hoặc đất đá. Đây là lựa chọn hàng đầu cho những ai cần xe đa năng, kết hợp giữa phong cách thể thao và tiện ích đời sống.',
-    'Hatchback': 'nổi bật với cửa hậu liền khoang hành lý, mở lên cao để dễ dàng xếp đồ. Thiết kế này gộp cabin và cốp thành một khối thống nhất (kiểu 2-box), tạo nên thân xe ngắn gọn, lý tưởng cho việc di chuyển trong thành phố. Xe thường có 3 hoặc 5 cửa, điển hình như Volkswagen Golf hay Hyundai i20. Dù kích thước nhỏ, hatchback tận dụng không gian thông minh: ghế sau gập phẳng giúp chở hàng cồng kềnh, trong khi khoang lái được bố trí hợp lý cho 4–5 người. Hatchback phù hợp với sinh viên, người độc thân hoặc gia đình nhỏ nhờ tính cơ động, dễ đỗ xe và tiết kiệm nhiên liệu. Tuy không sang trọng như sedan hay mạnh mẽ như SUV, hatchback vẫn là “chuyên gia đô thị” với giá thành hợp lý và sự tiện lợi tối ưu.',
+    'Coupe': 'là dòng public.xe thể thao mang phong cách thanh lịch và quyến rũ, thường được thiết kế với hai cửa, mái che cố định và dáng lưng thấp, tạo đường nét mượt mà từ đầu đến đuôi public.xe. Đặc trưng nhất của coupe là phần nóc public.xe ngắn, cửa sổ hẹp và khoang lái gọn gàng, thường chỉ dành cho 2–4 hành khách. Kiểu dáng này nhấn mạnh vào trải nghiệm lái linh hoạt, động cơ mạnh mẽ và khả năng bám đường ổn định. Một số mẫu coupe hiện đại như BMW 4 Series hay Audi A5 thậm chí có phiên bản bốn cửa nhưng vẫn giữ nguyên tỷ lệ thấp và dáng dốc phía sau. Coupe phù hợp với người yêu tốc độ, ưa phong cách cá tính và không quá đề cao không gian rộng rãi. Tuy hạn chế về khoang hành lý và chỗ ngồi phía sau, coupe lại tỏa sáng ở thiết kế đậm chất nghệ thuật và cảm giác lái phấn khích.',
+    'Crossover (CUV)': 'là sự kết hợp giữa SUV và sedan, sở hữu khung gầm public.xe con nhưng được nâng cao để tăng khả năng di chuyển trên nhiều địa hình. Điểm nhận diện rõ nhất là dáng đứng cao, khoang lái rộng và gầm public.xe vừa phải, giúp tầm nhìn lái tốt hơn sedan truyền thống. Crossover như Toyota RAV4 hay Honda CR-V thường có hệ dẫn động cầu trước (FWD) hoặc hai cầu (AWD), cân bằng giữa tiết kiệm nhiên liệu và tính đa dụng. Nội thất được tối ưu cho gia đình với hàng ghế gập linh hoạt, cửa hậu rộng và công nghệ an toàn hiện đại. Khác với SUV cỡ lớn, crossover nhẹ nhàng hơn, phù hợp với đô thị nhưng vẫn đủ sức “xông pha” trên đường trơn trượt hoặc đất đá. Đây là lựa chọn hàng đầu cho những ai cần public.xe đa năng, kết hợp giữa phong cách thể thao và tiện ích đời sống.',
+    'Hatchback': 'nổi bật với cửa hậu liền khoang hành lý, mở lên cao để dễ dàng xếp đồ. Thiết kế này gộp cabin và cốp thành một khối thống nhất (kiểu 2-box), tạo nên thân public.xe ngắn gọn, lý tưởng cho việc di chuyển trong thành phố. Xe thường có 3 hoặc 5 cửa, điển hình như Volkswagen Golf hay Hyundai i20. Dù kích thước nhỏ, hatchback tận dụng không gian thông minh: ghế sau gập phẳng giúp chở hàng cồng kềnh, trong khi khoang lái được bố trí hợp lý cho 4–5 người. Hatchback phù hợp với sinh viên, người độc thân hoặc gia đình nhỏ nhờ tính cơ động, dễ đỗ public.xe và tiết kiệm nhiên liệu. Tuy không sang trọng như sedan hay mạnh mẽ như SUV, hatchback vẫn là “chuyên gia đô thị” với giá thành hợp lý và sự tiện lợi tối ưu.',
     'Limousine':'là biểu tượng của xa xỉ và đẳng cấp, thường được thiết kế dài hơn phiên bản sedan tiêu chuẩn để tăng không gian nội thất. Đặc trưng nhất là dãy cửa kính dài, khoang lái riêng biệt cho tài xế và hệ thống giải trí cao cấp như màn hình TV, quầy bar mini trong phiên bản stretch limo. Xe thường được sử dụng cho dịch vụ thuê cao cấp, đám cưới hoặc sự kiện quan trọng. Các mẫu limousine thương mại như Mercedes-Maybach S-Class hay Rolls-Royce Phantom tập trung vào chất liệu sang trọng (da, gỗ tự nhiên), công nghệ cách âm và trải nghiệm êm ái tuyệt đối. Dù kém linh hoạt do kích thước cồng kềnh, limousine vẫn là lựa chọn số một cho những ai muốn khẳng định địa vị và tận hưởng không gian riêng tư tối thượng.',
-    'MPV (Multi-Purpose Vehicle)':'MPV, hay còn gọi là xe đa dụng, được thiết kế tối ưu cho nhu cầu chở người với không gian nội thất rộng rãi và linh hoạt. Khác SUV, MPV có thân hình vuông vức, trần cao và sàn thấp để tăng diện tích sử dụng, điển hình như Toyota Innova hay Kia Carnival. Xe thường sở hữu 3 hàng ghế, trong đó hàng thứ ba có thể gập hoặc tháo rời, cùng cửa trượt hai bên tiện lợi cho việc lên xuống. MPV phù hợp với gia đình đông thành viên nhờ khả năng chở 7–8 người thoải mái, kèm khoang hành lý đủ rộng dù đã xếp hết ghế. Tuy thiếu phong cách thể thao và khả năng off-road, MPV lại vượt trội ở sự thiết thực, an toàn và tiện nghi cho các chuyến đi dài.',
-    'Sedan':'là dòng xe phổ biến nhất với thiết kế 3 khoang riêng biệt: động cơ, cabin và cốp sau. Xe có 4 cửa, dáng thấp và cân đối, phù hợp cho gia đình nhỏ hoặc cá nhân ưa sự truyền thống. Điểm mạnh của sedan như Honda Accord hay Toyota Camry là sự êm ái khi di chuyển đường dài, khoang lái yên tĩnh và tiết kiệm nhiên liệu. Cốp xe tách biệt giúp cách âm tốt hơn hatchback, đồng thời đảm bảo tính an ninh cho hành lý. Sedan đa dạng từ phân khúc giá rẻ đến cao cấp, cân bằng giữa phong cách và công năng. Dù không đa dụng như SUV hay MPV, sedan vẫn là lựa chọn an toàn nhờ độ tin cậy và chi phí bảo trì hợp lý.',
-    'SUV (Sport Utility Vehicle)':'SUV là dòng xe đa địa hình, kết hợp sức mạnh của xe tải và tiện nghi của xe du lịch. Đặc điểm nhận dạng gồm gầm cao, thân xe vuông vức và hệ dẫn động AWD/4WD cho khả năng off-road. SUV chia thành hai nhóm: SUV khung liền (unibody) như Ford Escape phù hợp đô thị và SUV khung rời (body-on-frame) như Toyota Land Cruiser dành cho địa hình hiểm trở. Không gian nội thất rộng cùng khoang hành lý lớn là ưu điểm vượt trội, phù hợp cho gia đình hoặc chở hàng hóa. SUV cũng được ưa chuộng nhờ tầm nhìn lái cao, an toàn vượt trội và phong cách thể thao. Dù tiêu hao nhiên liệu hơn sedan, SUV vẫn chiếm lĩnh thị trường nhờ sự đa năng và khả năng thích ứng với mọi nhu cầu.',
+    'MPV (Multi-Purpose Vehicle)':'MPV, hay còn gọi là public.xe đa dụng, được thiết kế tối ưu cho nhu cầu chở người với không gian nội thất rộng rãi và linh hoạt. Khác SUV, MPV có thân hình vuông vức, trần cao và sàn thấp để tăng diện tích sử dụng, điển hình như Toyota Innova hay Kia Carnival. Xe thường sở hữu 3 hàng ghế, trong đó hàng thứ ba có thể gập hoặc tháo rời, cùng cửa trượt hai bên tiện lợi cho việc lên xuống. MPV phù hợp với gia đình đông thành viên nhờ khả năng chở 7–8 người thoải mái, kèm khoang hành lý đủ rộng dù đã xếp hết ghế. Tuy thiếu phong cách thể thao và khả năng off-road, MPV lại vượt trội ở sự thiết thực, an toàn và tiện nghi cho các chuyến đi dài.',
+    'Sedan':'là dòng public.xe phổ biến nhất với thiết kế 3 khoang riêng biệt: động cơ, cabin và cốp sau. Xe có 4 cửa, dáng thấp và cân đối, phù hợp cho gia đình nhỏ hoặc cá nhân ưa sự truyền thống. Điểm mạnh của sedan như Honda Accord hay Toyota Camry là sự êm ái khi di chuyển đường dài, khoang lái yên tĩnh và tiết kiệm nhiên liệu. Cốp public.xe tách biệt giúp cách âm tốt hơn hatchback, đồng thời đảm bảo tính an ninh cho hành lý. Sedan đa dạng từ phân khúc giá rẻ đến cao cấp, cân bằng giữa phong cách và công năng. Dù không đa dụng như SUV hay MPV, sedan vẫn là lựa chọn an toàn nhờ độ tin cậy và chi phí bảo trì hợp lý.',
+    'SUV (Sport Utility Vehicle)':'SUV là dòng public.xe đa địa hình, kết hợp sức mạnh của public.xe tải và tiện nghi của public.xe du lịch. Đặc điểm nhận dạng gồm gầm cao, thân public.xe vuông vức và hệ dẫn động AWD/4WD cho khả năng off-road. SUV chia thành hai nhóm: SUV khung liền (unibody) như Ford Escape phù hợp đô thị và SUV khung rời (body-on-frame) như Toyota Land Cruiser dành cho địa hình hiểm trở. Không gian nội thất rộng cùng khoang hành lý lớn là ưu điểm vượt trội, phù hợp cho gia đình hoặc chở hàng hóa. SUV cũng được ưa chuộng nhờ tầm nhìn lái cao, an toàn vượt trội và phong cách thể thao. Dù tiêu hao nhiên liệu hơn sedan, SUV vẫn chiếm lĩnh thị trường nhờ sự đa năng và khả năng thích ứng với mọi nhu cầu.',
     # ...
   },
   segment_descriptions={
-    'Phân khúc hạng A (City Car)': 'Hạng A gồm những chiếc xe siêu nhỏ, tối ưu cho việc di chuyển trong thành phố. Kích thước chỉ dài khoảng 3–3.6m, động cơ thường dưới 1.2L (như Toyota Aygo, Hyundai i10), giúp tiết kiệm nhiên liệu tối đa. Thiết kế gọn nhẹ, bán kính quay vòng hẹp và giá thành rẻ là ưu điểm nổi bật, phù hợp với sinh viên hoặc người mới lái. Nội thất đơn giản, chỗ ngồi cho 4 người nhưng hạn chế về khoang hành lý. Một số mẫu điện tử như Honda e hay MINI Electric đang dần phổ biến nhằm giảm khí thải. Tuy không phù hợp đường trường dài, xe hạng A vẫn là "bậc thầy" đỗ xe trong không gian chật hẹp và chi phí vận hành thấp.',
-    'Phân khúc hạng B (Supermini)': 'Hạng B là xe hatchback cỡ nhỏ, lớn hơn hạng A một chút (dài 3.8–4.2m), phục vụ người dùng cần xe tiết kiệm nhưng không quá chật chội. Động cơ phổ biến từ 1.0L–1.6L (như Ford Fiesta, Peugeot 208), cân bằng giữa hiệu suất và mức tiêu thụ nhiên liệu. Thiết kế trẻ trung, nội thất tối ưu hóa không gian với ghế sau gập 60/40 và khoang chứa đồ khoảng 300–350 lít. Công nghệ tập trung vào giải trí và an toàn cơ bản. Đây là lựa chọn lý tưởng cho người độc thân hoặc cặp đôi trẻ, ưa thích sự năng động và dễ dàng di chuyển trong đô thị đông đúc.',
-    'Phân khúc hạng C (Compact Car)': 'Hạng C là phân khúc xe gia đình cỡ trung, cân bằng giữa kích thước và giá cả. Dài khoảng 4.2–4.5m, động cơ từ 1.4L–2.0L (như Volkswagen Golf, Honda Civic), đáp ứng nhu cầu di chuyển hàng ngày lẫn chuyến đi xa. Thiết kế đa dạng: hatchback, sedan hoặc wagon, với không gian cho 5 người thoải mái và cốp xe từ 380–500 lít. Công nghệ tiêu chuẩn gồm màn hình cảm ứng, kết nối Apple CarPlay và hệ thống an toàn cơ bản. Đây là phân khúc cạnh tranh gay gắt, thu hút người dùng trẻ tuổi hoặc gia đình nhỏ nhờ độ tin cậy cao, chi phí bảo trì hợp lý và tính linh hoạt trong sử dụng.',
-    'Phân khúc hạng D (Large Family Car)': 'Hạng D là xe gia đình cỡ lớn, dài 4.6–4.9m (như Toyota Camry, Skoda Superb), kết hợp không gian rộng rãi và công nghệ hiện đại. Động cơ từ 1.8L–2.5L, cung cấp đủ sức mạnh cho hành trình dài. Nội thất tiện nghi với ghế ngả sâu, sưởi ghế và khoang hành lý trên 500 lít. Thiết kế nghiêng về sự thoải mái, hệ thống treo êm ái và cabin cách âm tốt. Xe hạng D phù hợp cho gia đình cần xe an toàn, bền bỉ và đủ sang trọng để sử dụng trong nhiều năm. Dù cạnh tranh với SUV, chúng vẫn giữ chỗ đứng nhờ chi phí vận hành thấp hơn và cảm giác lái ổn định.',
-    'Phân khúc hạng E (Executive Car)': 'Hạng E dành cho dòng xe hạng sang cỡ trung, phục vụ doanh nhân hoặc người có thu nhập cao. Kích thước dài 4.8–5m (như BMW 5 Series, Mercedes E-Class), sở hữu động cơ mạnh mẽ (từ 2.0L đến V6) và công nghệ cao cấp: ghế massage, màn hình head-up, hệ thống âm thanh cao cấp. Nội thất sang trọng với chất liệu da tự nhiên, gỗ veneer và khả năng cách âm vượt trội. Không gian hàng ghế sau rộng rãi, phù hợp để đón tiếp đối tác. Xe hạng E thường được dùng làm xe công ty hoặc phương tiện cá nhân cho những ai coi trọng đẳng cấp nhưng không muốn quá phô trương như hạng F.',
-    'Phân khúc hạng F (Luxury Car)': 'Hạng F đại diện cho đỉnh cao của xe sang trọng, thường là sedan hoặc limousine dài trên 5.2m (như Mercedes-Maybach S-Class, Rolls-Royce Ghost). Động cơ khủng (V8, V12 hoặc hybrid), nội thất dát vàng, sử dụng da cao cấp và gỗ quý. Công nghệ đột phá như hệ thống lọc không khí, màn hình giải trí riêng biệt cho từng ghế và khả năng tự lái cấp độ cao. Không gian tập trung vào hàng ghế sau với chế độ thư giãn toàn diện. Xe hạng F thường do tài xế lái, phục vụ giới siêu giàu hoặc nguyên thủ quốc gia. Giá thành có thể lên tới hàng triệu USD, đi kèm dịch vụ bảo dưỡng đặc quyền.',
-    'Phân khúc hạng J (SUV/Crossover)': 'Phân khúc hạng J là nhóm xe SUV (Sport Utility Vehicle) và Crossover, kết hợp giữa khả năng off-road của xe địa hình và tiện nghi của xe gia đình. Đặc trưng bởi gầm cao, thân xe vuông vức, hệ dẫn động hai cầu (AWD/4WD), cùng không gian nội thất rộng rãi. Xe hạng J thường chia thành hai nhóm: SUV cỡ nhỏ (như Honda CR-V, Toyota RAV4) phù hợp đô thị và SUV cỡ lớn (như Ford Explorer, Land Rover Defender) cho địa hình phức tạp. Thiết kế chú trọng vào tính đa dụng: khoang hành lý lớn, hệ thống treo êm ái, và công nghệ an toàn như kiểm soát hành trình hay cảnh báo điểm mù. Đối tượng hướng đến là gia đình cần không gian linh hoạt, người yêu du lịch hoặc những ai ưa phong cách thể thao. Dù tiêu hao nhiên liệu cao hơn sedan, hạng J vẫn thống trị thị trường nhờ khả năng thích ứng với mọi nhu cầu, từ di chuyển nội đô đến khám phá xa.',
-    'Phân khúc hạng M (MPV/Minivan)': 'Hạng M là xe đa dụng (MPV), tập trung vào không gian chở người với 3 hàng ghế (như Toyota Alphard, Kia Carnival). Thiết kế vuông vức, trần cao và cửa trượt hai bên giúp lên xuống dễ dàng. Động cơ thường từ 2.0L–3.5L, cân bằng giữa sức mạnh và tải trọng. Nội thất linh hoạt: ghế gập, bàn xoay hoặc khu vực giải trí tích hợp. Xe hạng M phù hợp gia đình đông thành viên, doanh nghiệp cần đón tiếp khách hoặc dịch vụ taxi cao cấp. Dù kém hấp dẫn về thiết kế, chúng vẫn không có đối thủ về tiện ích và khả năng chuyên chở.',
-    'Phân khúc hạng S (Sports Car)': 'Hạng S là thế giới của xe thể thao hiệu suất cao, tập trung vào tốc độ và trải nghiệm lái. Thiết kế thấp, động cơ mạnh (từ turbocharged đến V12), hệ thống treo thể thao và khí động học tối ưu (như Porsche 911, Chevrolet Corvette). Nội thất đơn giản hóa để giảm trọng lượng, vật liệu sử dụng carbon fiber hoặc Alcantara. Đa phần là xe hai cửa, chỗ ngồi cho 2–4 người nhưng không gian hạn chế. Hạng S hướng đến người đam mê tốc độ, sẵn sàng chi trả hàng trăm nghìn USD cho công nghệ đua xe hoặc phiên bản giới hạn. Dù kém tiện nghi và khó sử dụng hàng ngày, chúng vẫn là biểu tượng của đam mê và kỹ thuật cơ khí đỉnh cao.',
+    'Phân khúc hạng A (City Car)': 'Hạng A gồm những chiếc public.xe siêu nhỏ, tối ưu cho việc di chuyển trong thành phố. Kích thước chỉ dài khoảng 3–3.6m, động cơ thường dưới 1.2L (như Toyota Aygo, Hyundai i10), giúp tiết kiệm nhiên liệu tối đa. Thiết kế gọn nhẹ, bán kính quay vòng hẹp và giá thành rẻ là ưu điểm nổi bật, phù hợp với sinh viên hoặc người mới lái. Nội thất đơn giản, chỗ ngồi cho 4 người nhưng hạn chế về khoang hành lý. Một số mẫu điện tử như Honda e hay MINI Electric đang dần phổ biến nhằm giảm khí thải. Tuy không phù hợp đường trường dài, public.xe hạng A vẫn là "bậc thầy" đỗ public.xe trong không gian chật hẹp và chi phí vận hành thấp.',
+    'Phân khúc hạng B (Supermini)': 'Hạng B là public.xe hatchback cỡ nhỏ, lớn hơn hạng A một chút (dài 3.8–4.2m), phục vụ người dùng cần public.xe tiết kiệm nhưng không quá chật chội. Động cơ phổ biến từ 1.0L–1.6L (như Ford Fiesta, Peugeot 208), cân bằng giữa hiệu suất và mức tiêu thụ nhiên liệu. Thiết kế trẻ trung, nội thất tối ưu hóa không gian với ghế sau gập 60/40 và khoang chứa đồ khoảng 300–350 lít. Công nghệ tập trung vào giải trí và an toàn cơ bản. Đây là lựa chọn lý tưởng cho người độc thân hoặc cặp đôi trẻ, ưa thích sự năng động và dễ dàng di chuyển trong đô thị đông đúc.',
+    'Phân khúc hạng C (Compact Car)': 'Hạng C là phân khúc public.xe gia đình cỡ trung, cân bằng giữa kích thước và giá cả. Dài khoảng 4.2–4.5m, động cơ từ 1.4L–2.0L (như Volkswagen Golf, Honda Civic), đáp ứng nhu cầu di chuyển hàng ngày lẫn chuyến đi xa. Thiết kế đa dạng: hatchback, sedan hoặc wagon, với không gian cho 5 người thoải mái và cốp public.xe từ 380–500 lít. Công nghệ tiêu chuẩn gồm màn hình cảm ứng, kết nối Apple CarPlay và hệ thống an toàn cơ bản. Đây là phân khúc cạnh tranh gay gắt, thu hút người dùng trẻ tuổi hoặc gia đình nhỏ nhờ độ tin cậy cao, chi phí bảo trì hợp lý và tính linh hoạt trong sử dụng.',
+    'Phân khúc hạng D (Large Family Car)': 'Hạng D là public.xe gia đình cỡ lớn, dài 4.6–4.9m (như Toyota Camry, Skoda Superb), kết hợp không gian rộng rãi và công nghệ hiện đại. Động cơ từ 1.8L–2.5L, cung cấp đủ sức mạnh cho hành trình dài. Nội thất tiện nghi với ghế ngả sâu, sưởi ghế và khoang hành lý trên 500 lít. Thiết kế nghiêng về sự thoải mái, hệ thống treo êm ái và cabin cách âm tốt. Xe hạng D phù hợp cho gia đình cần public.xe an toàn, bền bỉ và đủ sang trọng để sử dụng trong nhiều năm. Dù cạnh tranh với SUV, chúng vẫn giữ chỗ đứng nhờ chi phí vận hành thấp hơn và cảm giác lái ổn định.',
+    'Phân khúc hạng E (Executive Car)': 'Hạng E dành cho dòng public.xe hạng sang cỡ trung, phục vụ doanh nhân hoặc người có thu nhập cao. Kích thước dài 4.8–5m (như BMW 5 Series, Mercedes E-Class), sở hữu động cơ mạnh mẽ (từ 2.0L đến V6) và công nghệ cao cấp: ghế massage, màn hình head-up, hệ thống âm thanh cao cấp. Nội thất sang trọng với chất liệu da tự nhiên, gỗ veneer và khả năng cách âm vượt trội. Không gian hàng ghế sau rộng rãi, phù hợp để đón tiếp đối tác. Xe hạng E thường được dùng làm public.xe công ty hoặc phương tiện cá nhân cho những ai coi trọng đẳng cấp nhưng không muốn quá phô trương như hạng F.',
+    'Phân khúc hạng F (Luxury Car)': 'Hạng F đại diện cho đỉnh cao của public.xe sang trọng, thường là sedan hoặc limousine dài trên 5.2m (như Mercedes-Maybach S-Class, Rolls-Royce Ghost). Động cơ khủng (V8, V12 hoặc hybrid), nội thất dát vàng, sử dụng da cao cấp và gỗ quý. Công nghệ đột phá như hệ thống lọc không khí, màn hình giải trí riêng biệt cho từng ghế và khả năng tự lái cấp độ cao. Không gian tập trung vào hàng ghế sau với chế độ thư giãn toàn diện. Xe hạng F thường do tài xế lái, phục vụ giới siêu giàu hoặc nguyên thủ quốc gia. Giá thành có thể lên tới hàng triệu USD, đi kèm dịch vụ bảo dưỡng đặc quyền.',
+    'Phân khúc hạng J (SUV/Crossover)': 'Phân khúc hạng J là nhóm public.xe SUV (Sport Utility Vehicle) và Crossover, kết hợp giữa khả năng off-road của public.xe địa hình và tiện nghi của public.xe gia đình. Đặc trưng bởi gầm cao, thân public.xe vuông vức, hệ dẫn động hai cầu (AWD/4WD), cùng không gian nội thất rộng rãi. Xe hạng J thường chia thành hai nhóm: SUV cỡ nhỏ (như Honda CR-V, Toyota RAV4) phù hợp đô thị và SUV cỡ lớn (như Ford Explorer, Land Rover Defender) cho địa hình phức tạp. Thiết kế chú trọng vào tính đa dụng: khoang hành lý lớn, hệ thống treo êm ái, và công nghệ an toàn như kiểm soát hành trình hay cảnh báo điểm mù. Đối tượng hướng đến là gia đình cần không gian linh hoạt, người yêu du lịch hoặc những ai ưa phong cách thể thao. Dù tiêu hao nhiên liệu cao hơn sedan, hạng J vẫn thống trị thị trường nhờ khả năng thích ứng với mọi nhu cầu, từ di chuyển nội đô đến khám phá xa.',
+    'Phân khúc hạng M (MPV/Minivan)': 'Hạng M là public.xe đa dụng (MPV), tập trung vào không gian chở người với 3 hàng ghế (như Toyota Alphard, Kia Carnival). Thiết kế vuông vức, trần cao và cửa trượt hai bên giúp lên xuống dễ dàng. Động cơ thường từ 2.0L–3.5L, cân bằng giữa sức mạnh và tải trọng. Nội thất linh hoạt: ghế gập, bàn xoay hoặc khu vực giải trí tích hợp. Xe hạng M phù hợp gia đình đông thành viên, doanh nghiệp cần đón tiếp khách hoặc dịch vụ taxi cao cấp. Dù kém hấp dẫn về thiết kế, chúng vẫn không có đối thủ về tiện ích và khả năng chuyên chở.',
+    'Phân khúc hạng S (Sports Car)': 'Hạng S là thế giới của public.xe thể thao hiệu suất cao, tập trung vào tốc độ và trải nghiệm lái. Thiết kế thấp, động cơ mạnh (từ turbocharged đến V12), hệ thống treo thể thao và khí động học tối ưu (như Porsche 911, Chevrolet Corvette). Nội thất đơn giản hóa để giảm trọng lượng, vật liệu sử dụng carbon fiber hoặc Alcantara. Đa phần là public.xe hai cửa, chỗ ngồi cho 2–4 người nhưng không gian hạn chế. Hạng S hướng đến người đam mê tốc độ, sẵn sàng chi trả hàng trăm nghìn USD cho công nghệ đua public.xe hoặc phiên bản giới hạn. Dù kém tiện nghi và khó sử dụng hàng ngày, chúng vẫn là biểu tượng của đam mê và kỹ thuật cơ khí đỉnh cao.',
     # ...
   },
   energy_descriptions={
-    'Xăng': 'Xe chạy bằng xăng là loại phương tiện truyền thống, hoạt động nhờ động cơ đốt trong sử dụng nhiên liệu xăng. Ưu điểm lớn của loại xe này là dễ tiếp nhiên liệu, phù hợp với hạ tầng hiện có, và khả năng vận hành ổn định trên đường dài. Thời gian tiếp nhiên liệu nhanh, chỉ mất vài phút là xe có thể tiếp tục di chuyển. Tuy nhiên, xe xăng tiêu thụ nhiên liệu hóa thạch nên phát thải khí CO₂ nhiều hơn, ảnh hưởng đến môi trường. Đây là lựa chọn phù hợp với những ai cần sự tiện lợi và quen thuộc.',
-    'Điện': 'Xe điện hoạt động hoàn toàn bằng động cơ điện, sử dụng pin sạc thay cho nhiên liệu truyền thống. Ưu điểm lớn nhất là không phát thải khí ô nhiễm khi vận hành, giúp bảo vệ môi trường và tiết kiệm chi phí nhiên liệu. Xe chạy rất êm ái, ít rung động, và chi phí bảo trì thường thấp hơn do ít bộ phận cơ khí hơn. Tuy nhiên, xe điện phụ thuộc vào hệ thống sạc điện, thời gian sạc lâu hơn so với tiếp nhiên liệu xăng, và phạm vi di chuyển còn hạn chế ở một số mẫu xe. Đây là lựa chọn hiện đại, thân thiện với môi trường, phù hợp cho người sống ở đô thị.',
-    'Hybrid': 'Xe hybrid kết hợp cả động cơ xăng và động cơ điện, giúp tối ưu hóa khả năng tiết kiệm nhiên liệu và giảm khí thải. Trong điều kiện vận hành bình thường, xe có thể tự chuyển đổi giữa hai loại năng lượng để đạt hiệu suất cao nhất. Khi di chuyển chậm hoặc kẹt xe, xe dùng động cơ điện để tiết kiệm xăng; khi cần sức mạnh, động cơ xăng sẽ hỗ trợ. Ưu điểm của xe hybrid là tiết kiệm nhiên liệu, giảm phát thải và không cần sạc điện từ bên ngoài. Đây là giải pháp trung gian lý tưởng cho khách hàng muốn chuyển dần sang xe điện mà vẫn đảm bảo sự linh hoạt.',
+    'Xăng': 'Xe chạy bằng xăng là loại phương tiện truyền thống, hoạt động nhờ động cơ đốt trong sử dụng nhiên liệu xăng. Ưu điểm lớn của loại public.xe này là dễ tiếp nhiên liệu, phù hợp với hạ tầng hiện có, và khả năng vận hành ổn định trên đường dài. Thời gian tiếp nhiên liệu nhanh, chỉ mất vài phút là public.xe có thể tiếp tục di chuyển. Tuy nhiên, public.xe xăng tiêu thụ nhiên liệu hóa thạch nên phát thải khí CO₂ nhiều hơn, ảnh hưởng đến môi trường. Đây là lựa chọn phù hợp với những ai cần sự tiện lợi và quen thuộc.',
+    'Điện': 'Xe điện hoạt động hoàn toàn bằng động cơ điện, sử dụng pin sạc thay cho nhiên liệu truyền thống. Ưu điểm lớn nhất là không phát thải khí ô nhiễm khi vận hành, giúp bảo vệ môi trường và tiết kiệm chi phí nhiên liệu. Xe chạy rất êm ái, ít rung động, và chi phí bảo trì thường thấp hơn do ít bộ phận cơ khí hơn. Tuy nhiên, public.xe điện phụ thuộc vào hệ thống sạc điện, thời gian sạc lâu hơn so với tiếp nhiên liệu xăng, và phạm vi di chuyển còn hạn chế ở một số mẫu public.xe. Đây là lựa chọn hiện đại, thân thiện với môi trường, phù hợp cho người sống ở đô thị.',
+    'Hybrid': 'Xe hybrid kết hợp cả động cơ xăng và động cơ điện, giúp tối ưu hóa khả năng tiết kiệm nhiên liệu và giảm khí thải. Trong điều kiện vận hành bình thường, public.xe có thể tự chuyển đổi giữa hai loại năng lượng để đạt hiệu suất cao nhất. Khi di chuyển chậm hoặc kẹt public.xe, public.xe dùng động cơ điện để tiết kiệm xăng; khi cần sức mạnh, động cơ xăng sẽ hỗ trợ. Ưu điểm của public.xe hybrid là tiết kiệm nhiên liệu, giảm phát thải và không cần sạc điện từ bên ngoài. Đây là giải pháp trung gian lý tưởng cho khách hàng muốn chuyển dần sang public.xe điện mà vẫn đảm bảo sự linh hoạt.',
     # ...
   }
 )
 
 # -------------------------------
-# ROUTE: Nếu khách hàng không muốn lọc theo các tiêu chí trên, chọn tất cả xe
+# ROUTE: Nếu khách hàng không muốn lọc theo các tiêu chí trên, chọn tất cả public.xe
 # -------------------------------
 @app.route('/select_all_vehicles')
 def select_all_vehicles():
@@ -257,7 +260,7 @@ def select_all_vehicles():
         cur = conn.cursor()
         cur.execute("""
             SELECT ten_xe, img_path, model_year, mileage, hp, transmission, price, description
-            FROM xe
+            FROM public.xe
             ORDER BY ten_xe;
         """)
         rows = cur.fetchall()
@@ -278,22 +281,22 @@ def select_all_vehicles():
         session['vehicles'] = [v['ten_xe'] for v in vehicles]
         return render_template('select_vehicles.html', vehicles=vehicles)
     except Exception as e:
-        flash("Lỗi truy xuất dữ liệu xe: " + str(e))
+        flash("Lỗi truy xuất dữ liệu public.xe: " + str(e))
         return redirect(url_for('filter_vehicles'))
 
 
 # -------------------------------
-# ROUTE: Trang chọn xe từ danh sách lọc
+# ROUTE: Trang chọn public.xe từ danh sách lọc
 # -------------------------------
 @app.route('/select_vehicles', methods=['POST'])
 def select_vehicles():
     selected_vehicles = request.form.getlist('vehicle')
     if not selected_vehicles:
-        flash("Vui lòng chọn ít nhất 2 xe.")
+        flash("Vui lòng chọn ít nhất 2 public.xe.")
         return redirect(url_for('filter_vehicles'))
     session['selected_vehicles']   = selected_vehicles
     session['alternative_names']   = selected_vehicles   # ← thêm dòng này
-    flash("Danh sách xe đã được lưu. Tiếp theo, hãy chọn các tiêu chí (từ 2 đến 7).")
+    flash("Danh sách public.xe đã được lưu. Tiếp theo, hãy chọn các tiêu chí (từ 2 đến 7).")
     return redirect(url_for('select_criteria_page'))
 
 # -------------------------------
@@ -456,7 +459,7 @@ def result():
     selected_info = {crit: full_criteria[crit] for crit in selected if crit in full_criteria}
     chosen_vehicles = session.get('selected_vehicles', None)
     if not chosen_vehicles:
-        flash("Chưa có danh sách xe đã chọn.")
+        flash("Chưa có danh sách public.xe đã chọn.")
         return redirect(url_for('select_vehicles'))
     
     sub_vectors = {}
@@ -476,21 +479,21 @@ def result():
             flash(f"Lỗi truy xuất dữ liệu từ bảng {info['table']}: " + str(e))
             return redirect(url_for('select_criteria_page'))
         if not rows:
-            flash(f"Bảng {info['table']} không có dữ liệu cho các xe đã chọn.")
+            flash(f"Bảng {info['table']} không có dữ liệu cho các public.xe đã chọn.")
             return redirect(url_for('select_criteria_page'))
         names = [row[0] for row in rows]
         if alternative_names is None:
             alternative_names = names
         else:
             if alternative_names != names:
-                flash("Trật tự xe giữa các bảng không đồng nhất.")
+                flash("Trật tự public.xe giữa các bảng không đồng nhất.")
                 return redirect(url_for('select_criteria_page'))
         values = []
         for row in rows:
             try:
                 values.append(float(row[1]))
             except Exception:
-                flash(f"Lỗi chuyển đổi giá trị trong bảng {info['table']} cho xe {row[0]}.")
+                flash(f"Lỗi chuyển đổi giá trị trong bảng {info['table']} cho public.xe {row[0]}.")
                 return redirect(url_for('select_criteria_page'))
          # Build pairwise matrix with clamped ratios
         n = len(values)
@@ -841,7 +844,7 @@ def recalc_matrix():
     chosen_vehicles = session.get('selected_vehicles', None)
     alternative_names = session.get('alternative_names', None)
     if not chosen_vehicles or not alternative_names:
-        flash("Chưa có thông tin xe cần đánh giá.")
+        flash("Chưa có thông tin public.xe cần đánh giá.")
         return redirect(url_for('select_vehicles'))
     
     sub_vectors = session.get('matrices_detail', {})
