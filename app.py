@@ -25,9 +25,10 @@ def get_db_connection():
         port='5432',
         dbname='ahp_db',
         user='ahp_db_user',
-        password='9qycSKnyWuNSxFs65SxltomRWYHXrEkQ',
+        password='9qvCSkNYuMNSXr56SXltomRvhYHxrEkQ',
         sslmode='require'
     )
+    conn.cursor().execute("SET search_path TO public;")
     return conn
 
 # -------------------------------
