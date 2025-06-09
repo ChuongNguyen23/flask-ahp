@@ -23,7 +23,7 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # DATABASE: Kết nối đến PostgreSQL
 # -------------------------------
 def get_db_connection():
-    url = 'postgresql://ahp_db_user:9qycSKnyWuNSxFs65SxltomRWYHXrEkQ@dpg-d12qec15pdvs73d1e680-a/ahp_db'
+    url = 'postgresql://ahp_db:cfhWQAw8lQC8H8kYPhoPBikl1ZN2MQfr@dpg-d13di4p5pdvs73dl3fig-a/ahp_db_pqhn'
     result = urllib.parse.urlparse(url)
 
     conn = psycopg2.connect(
