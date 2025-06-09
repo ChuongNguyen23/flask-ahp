@@ -1,3 +1,5 @@
+from psycopg2.extras import RealDictCursor
+import os
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import json
 import numpy as np
