@@ -33,9 +33,11 @@ def get_db_connection():
         sslmode='require'
     )
 
-    # Đặt schema mặc định là public (rất quan trọng)
-    with conn.cursor() as cur:
-        cur.execute("SET search_path TO public;")
+    # SET SCHEMA mặc định là public để không phải viết public.xe
+    cur = conn.cursor()
+    cur.execute('SET search_path TO public;')
+    cur.close()
+
     return conn
 
 # -------------------------------
