@@ -11,6 +11,7 @@ from weasyprint import HTML
 from flask import jsonify
 import psycopg2.extras
 from datetime import datetime
+import urllib.parse
 
 app = Flask(__name__)
 app.jinja_env.globals.update(enumerate=enumerate)
@@ -20,15 +21,21 @@ app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
 # DATABASE: Kết nối đến PostgreSQL
 # -------------------------------
 def get_db_connection():
+    url = 'postgresql://ahp_db_user:9qycSKnyWuNSxFs65SxltomRWYHXrEkQ@dpg-d12qec15pdvs73d1e680-a/ahp_db'
+    result = urllib.parse.urlparse(url)
+
     conn = psycopg2.connect(
-        host='dpg-d12qec15pdvs73d1e680-a',
-        port='5432',
-        dbname='ahp_db',
-        user='ahp_db_user',
-        password='9qvCSkNYuMNSXr56SXltomRvhYHxrEkQ',
+        dbname=result.path[1:],
+        user=result.username,
+        password=result.password,
+        host=result.hostname,
+        port=result.port,
         sslmode='require'
     )
-    conn.cursor().execute("SET search_path TO public;")
+
+    # Đặt schema mặc định là public (rất quan trọng)
+    with conn.cursor() as cur:
+        cur.execute("SET search_path TO public;")
     return conn
 
 # -------------------------------
