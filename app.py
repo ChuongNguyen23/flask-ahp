@@ -21,31 +21,36 @@ print(">>> DATABASE_URL on Render:", db_url)
 
 app = Flask(__name__)
 app.jinja_env.globals.update(enumerate=enumerate)
-app.secret_key = 'your_secret_key'  # Thay bằng secret key thật của bạn
+app.secret_key = os.environ.get('SECRET_KEY', 'dev_default_key')  # Lấy từ biến môi trường
 
 # -------------------------------
 # DATABASE: Kết nối đến PostgreSQL
 # -------------------------------
 def get_db_connection():
-    url = os.environ.get('DATABASE_URL')
-    if not url:
-        raise RuntimeError("DATABASE_URL is not set")
-
-    result = urllib.parse.urlparse(url)
-    conn = psycopg2.connect(
-        dbname   = result.path[1:],
-        user     = result.username,
-        password = result.password,
-        host     = result.hostname,
-        port     = result.port,
-        sslmode  = 'require'
-    )
-
-    # 👇 THÊM search_path = public
-    with conn.cursor() as cur:
-        cur.execute("SET search_path TO public;")
-
+    db_url = os.environ.get('DATABASE_URL')
+    if db_url:
+        try:
+            conn = psycopg2.connect(db_url, sslmode='require')
+        except Exception as e:
+            print('>>> Lỗi kết nối tới DATABASE_URL:', e)
+            raise
+    else:
+        local_url = os.environ.get('DATABASE_URL_LOCAL')
+        if local_url:
+            try:
+                conn = psycopg2.connect(local_url)
+            except Exception as e:
+                print('>>> Lỗi kết nối tới DATABASE_URL_LOCAL:', e)
+                raise
+        else:
+            conn = psycopg2.connect(
+                dbname='ahp_db', user='postgres', password='123', host='localhost', port='5432'
+            )
+    cur = conn.cursor()
+    cur.execute('SET search_path TO public;')
+    cur.close()
     return conn
+
 
 
 
@@ -1025,4 +1030,5 @@ def history():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
