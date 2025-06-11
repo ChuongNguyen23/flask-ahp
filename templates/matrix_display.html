@@ -152,8 +152,17 @@ canvas {
 <section id="featured-cars" data-total="{{ vehicles|length }}">
   <div class="container"><div class="section-header text-center">
       <h2>Ma<span> trận so sánh cặp cho mỗi tiêu chí </span></h2>
-      <p>Chỉnh <span> sửa và tính toán lại AHP</span></p>
+      <p>Chỉnh <span> sửa và tính toán AHP</span></p>
     </div>
+{% if manual_mode %}
+  <div class="alert alert-info text-center" role="alert">
+    <strong>Chế độ thủ công:</strong> Bạn đang nhập các ma trận phương án thủ công. Hệ thống chưa tự động khởi tạo ma trận.
+  </div>
+{% else %}
+  <div class="alert alert-success text-center" role="alert">
+    <strong>Chế độ tự động:</strong> Các ma trận so sánh phương án đã được đề xuất tự động.
+  </div>
+{% endif %}
 
     <div id="vehicleWarning" class="text-danger text-center mb-3"></div>
 
