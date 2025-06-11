@@ -191,8 +191,16 @@ canvas {
         <canvas id="critWeightChart" height="140"></canvas>
       </div>
       <div class="text-center mt-3">
-           <button type="submit" class="btn btn-success">Tự động đề xuất ma trận phương án</button>
-           <button type="submit" class="btn btn-secondary">Nhập các ma trận phương án</button>
+          <!-- Nút 1: Tự động đề xuất ma trận phương án -->
+<form action="/custom_matrix" method="POST">
+    <button type="submit" class="btn btn-success">Tự động đề xuất ma trận phương án</button>
+</form>
+
+<!-- Nút 2: Nhập các ma trận phương án -->
+<form action="/manual_matrix_input" method="POST">
+    <button type="submit" class="btn btn-secondary">Nhập các ma trận phương án</button>
+</form>
+
         </div>
       </form>
     </div>
