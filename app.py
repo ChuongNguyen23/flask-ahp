@@ -1031,27 +1031,18 @@ def history():
 
 @app.route('/manual_matrix_input', methods=['POST'])
 def manual_matrix_input():
-    # Tương tự như custom_matrix nhưng KHÔNG xử lý tính toán gì cả
-    # Chỉ truyền thông tin tiêu chí và phương án sang matrix_display.html
     selected_criteria = session.get('selected_criteria')
     selected_vehicles = session.get('selected_vehicles')
 
     if not selected_criteria or not selected_vehicles:
         return redirect(url_for('select_criteria'))
 
-    # Khởi tạo các ma trận rỗng (chưa nhập gì)
-    matrices_detail = {}
-    for criterion in selected_criteria:
-        n = len(selected_vehicles)
-        matrix = [[1.0 if i == j else "" for j in range(n)] for i in range(n)]
-        matrices_detail[criterion] = matrix
-
-    session['matrices_detail'] = matrices_detail
+    # KHÔNG tính toán gì – chỉ truyền tên tiêu chí, tên xe
     return render_template('matrix_display.html',
                            selected_criteria=selected_criteria,
                            selected_vehicles=selected_vehicles,
-                           matrices_detail=matrices_detail,
-                           manual_mode=True)  # flag để phân biệt chế độ
+                           manual_mode=True)
+
 
 
 if __name__ == '__main__':
