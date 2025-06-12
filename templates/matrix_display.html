@@ -149,124 +149,101 @@ canvas {
 
 
 
-{{% extends "layout.html" %}}
-{{% block content %}}
-
-<section id="featured-cars" data-total="{{{{ vehicles|length }}}}">
-  <div class="container">
-    <div class="section-header text-center">
+<section id="featured-cars" data-total="{{ vehicles|length }}">
+  <div class="container"><div class="section-header text-center">
       <h2>Ma<span> trận so sánh cặp cho mỗi tiêu chí </span></h2>
-      <p>Chỉnh <span> sửa và tính toán AHP</span></p>
+      <p>Chỉnh <span> sửa và tính toán lại AHP</span></p>
     </div>
 
-    {{% if manual_mode %}}
-      <div class="alert alert-info text-center" role="alert">
-        <strong>Chế độ thủ công:</strong> Bạn đang nhập các ma trận phương án thủ công. Hệ thống chưa tự động khởi tạo ma trận.
-      </div>
-    {{% else %}}
-      <div class="alert alert-success text-center" role="alert">
-        <strong>Chế độ tự động:</strong> Các ma trận so sánh phương án đã được đề xuất tự động.
-      </div>
-    {{% endif %}}
+    <div id="vehicleWarning" class="text-danger text-center mb-3"></div>
 
-    <form id="matrices-form" method="POST" novalidate>
-      {{% for crit in selected_criteria %}}
-        {{% if manual_mode %}}
-          {{% set matrix = None %}}
-        {{% else %}}
-          {{% set matrix = matrices[crit]['original'] %}}
-        {{% endif %}}
-
-        <div class="matrix-container" data-crit="{{{{ crit }}}}">
-          <h4>{{{{ full_cfg[crit]['display'] }}}}</h4>
-          <div class="metrics text-sm text-muted">
-            <span>λₘₐₓ: <b class="lambda">–</b></span>
-            <span>CI: <b class="ci">–</b></span>
-            <span>CR: <b class="cr">–</b></span>
-            <span>Weights: <b class="weights">–</b></span>
-          </div>
-          <table class="table table-bordered text-center">
-            <thead>
-              <tr>
-                <th>Phương án</th>
-                {{% for alt in alternatives %}}
-                  <th>{{{{ alt }}}}</th>
-                {{% endfor %}}
-              </tr>
-            </thead>
-            <tbody>
-              {{% for i in range(alternatives|length) %}}
-                <tr>
-                  <th class="align-middle">{{{{ alternatives[i] }}}}</th>
-                  {{% for j in range(alternatives|length) %}}
-                    <td>
-                      {{% if j > i %}}
-                        <div class="mb-3">
-                          <input
-                            type="number"
-                            class="form-control pair-input"
-                            data-i="{{{{ i }}}}" data-j="{{{{ j }}}}"
-                            name="matrix_{{{{ crit }}}}_{{{{ i }}}}_{{{{ j }}}}"
-                            step="any" min="0.1111" max="9"
-                            {{% if not manual_mode %}}value="{{{{ matrix[i][j] | round(4) }}}}"{{% endif %}}
-                            required
-                          >
-                          <div class="invalid-feedback">
-                            Giá trị phải nằm trong khoảng từ 1/9 (~0.1111) đến 9.
-                          </div>
-                        </div>
-                      {{% elif j == i %}}
-                        <input type="number" readonly class="form-control" value="1.0000">
-                      {{% else %}}
-                        <input
-                          type="number"
-                          class="form-control mirror-input"
-                          data-i="{{{{ i }}}}" data-j="{{{{ j }}}}"
-                          step="any" min="0.1111" max="9"
-                          readonly
-                          {{% if not manual_mode %}}value="{{{{ (1.0 / matrix[j][i]) | round(4) }}}}"{{% endif %}}
-                        >
-                      {{% endif %}}
-                    </td>
-                  {{% endfor %}}
-                </tr>
-              {{% endfor %}}
-            </tbody>
-          </table>
+    <div class="container my-5">
+<form id="matrices-form" method="POST" novalidate>
+      {% for crit, info in matrices.items() %}
+      <div class="matrix-container" data-crit="{{ crit }}">
+        <h4>{{ full_cfg[crit]['display'] }} (Trọng số cũ: {{ info.weights | join(', ') }})</h4>
+        <div class="metrics text-sm text-muted">
+          <span>λₘₐₓ: <b class="lambda">–</b></span>
+          <span>CI: <b class="ci">–</b></span>
+          <span>CR: <b class="cr">–</b></span>
+          <span>Weights: <b class="weights">–</b></span>
         </div>
-      {{% endfor %}}
-
-      <div class="d-flex justify-content-between mt-4">
-        <button
-          type="submit"
-          formaction="{{{{ url_for('custom_matrix') }}}}"
-          formmethod="post"
-          class="btn btn-primary"
-        >
-          <i class="fa-solid fa-calculator"></i> Tính lại AHP
-        </button>
-        <button
-          type="submit"
-          formaction="{{{{ url_for('recalc_total') }}}}"
-          formmethod="post"
-          class="btn btn-success"
-          disabled
-        >
-          <i class="fa-solid fa-chart-simple"></i> Xem kết quả tổng
-        </button>
+        <table class="table table-bordered text-center">
+          <thead>
+            <tr>
+              <th>Phương án</th>
+              {% for alt in alternatives %}
+                <th>{{ alt }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in range(alternatives|length) %}
+              <tr>
+                <th class="align-middle">{{ alternatives[i] }}</th>
+                {% for j in range(alternatives|length) %}
+                  <td>
+                    {% if j > i %}
+                    <div class="mb-3">
+                      <input
+                        type="number"
+                        class="form-control pair-input"
+                        data-i="{{ i }}" data-j="{{ j }}"
+                        name="matrix_{{ crit }}_{{ i }}_{{ j }}"
+                        step="any" min="0.1111" max="9"
+                        value="{{ info.original[i][j] | round(4) }}"
+                        required
+                      >
+                      <div class="invalid-feedback">
+        Giá trị phải nằm trong khoảng từ 1/9 (~0.1111) đến 9.
       </div>
-    </form>
+    </div>
+                    {% elif j == i %}
+                      <input type="number" readonly class="form-control" value="1.0000">
+                    {% else %}
+                      {% set rev = 1.0 / info.original[j][i] %}
+                      {% set rev = rev < (1.0/9.0) and (1.0/9.0) or rev %}
+                      {% set rev = rev > 9.0 and 9.0 or rev %}
+                      <input
+                        type="number"
+                        class="form-control mirror-input"
+                        data-i="{{ i }}" data-j="{{ j }}"
+                        step="any" min="0.1111" max="9"
+                        readonly
+                        value="{{ rev | round(4) }}"
+                      >
+                    {% endif %}
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% endfor %}
+    <div class="d-flex justify-content-between mt-4">
+      <button
+        type="submit"
+        formaction="{{ url_for('custom_matrix') }}"
+        formmethod="post"
+        class="btn btn-primary"
+      >
+        <i class="fa-solid fa-calculator"></i> Tính lại AHP
+      </button>
+      <button
+        type="submit"
+        formaction="{{ url_for('recalc_total') }}"
+        formmethod="post"
+        class="btn btn-success"
+        disabled
+      >
+        <i class="fa-solid fa-chart-simple"></i> Xem kết quả tổng
+      </button>
+    </div>
+  </form>
+</div>
   </div>
 </section>
-
-{{% if not manual_mode %}}
-<script>
-  refreshAll();
-</script>
-{{% endif %}}
-
-{{% endblock %}}
-
 
 
 <footer class="bg-dark text-center text-white py-3">

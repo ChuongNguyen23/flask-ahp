@@ -1029,27 +1029,6 @@ def history():
     return render_template('history.html', history_list=history_list)
 
 
-@app.route('/manual_matrix_input', methods=['POST'])
-def manual_matrix_input():
-    selected_criteria = session.get('selected_criteria')
-    selected_vehicles = session.get('selected_vehicles')
-
-    if not selected_criteria or not selected_vehicles:
-        return redirect(url_for('select_criteria'))
-
-    # Lấy lại thông tin tên hiển thị tiêu chí
-    full_cfg = session.get('criteria_config')  # hoặc bất kỳ tên nào bạn đã lưu
-
-    # Tên phương án (xe)
-    vehicle_names = [v['name'] for v in selected_vehicles]
-
-    return render_template('matrix_display.html',
-                           selected_criteria=selected_criteria,
-                           selected_vehicles=selected_vehicles,
-                           full_cfg=full_cfg,
-                           alternatives=vehicle_names,
-                           manual_mode=True)
-
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=True)
