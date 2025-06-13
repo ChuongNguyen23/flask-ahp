@@ -54,7 +54,6 @@ def get_db_connection():
 
 
 
-
 # -------------------------------
 # Truy vấn cấu hình tiêu chí từ bảng criteria_config
 # -------------------------------
@@ -779,15 +778,16 @@ def export_excel():
 def export_pdf():
     now = datetime.now()
     html = render_template('result_pdf.html',
-        results         = session['results'],
-        crit_labels_vn  = session['crit_labels_vn'],
-        alt_labels      = session['alt_labels'],
-        alt_scores      = session['alt_scores'],
-        crit_values     = session['crit_values'],
-        lambda_max      = session['criteria_consistency']['lambda_max'],
-        ci              = session['criteria_consistency']['CI'],
-        cr              = session['criteria_consistency']['CR'],
-        now             = now
+        results            = session['results'],
+        crit_labels_vn     = session['crit_labels_vn'],
+        alt_labels         = session['alt_labels'],
+        alt_scores         = session['alt_scores'],
+        crit_values        = session['crit_values'],
+        lambda_max         = session['criteria_consistency']['lambda_max'],
+        ci                 = session['criteria_consistency']['CI'],
+        cr                 = session['criteria_consistency']['CR'],
+        matrices_detail    = session.get('matrices_detail', {}),
+        now                = now
     )
     pdf_bytes = HTML(string=html).write_pdf()
     return send_file(

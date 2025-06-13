@@ -107,6 +107,108 @@ canvas {
   .form-control.is-invalid + .invalid-feedback {
     display: block;
   }
+
+/* --- Card chung cho mỗi ma trận --- */
+.matrix-container {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1.5rem rgba(0,0,0,0.1);
+  padding: 2rem;
+  margin-bottom: 2.5rem;
+}
+
+/* --- Tiêu đề bảng (Tên tiêu chí + trọng số cũ) --- */
+.matrix-container > h4 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 1rem;
+  border-left: 4px solid #007bff;
+  padding-left: 0.75rem;
+}
+
+/* --- Khung hiển thị các metrics (λ, CI, CR, Weights) --- */
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.metrics span {
+  background: #f1f5f9;
+  border-radius: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #374151;
+  box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.05);
+}
+.metrics span strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* --- Bảng ma trận --- */
+.matrix-container .table {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.matrix-container .table thead {
+  background: #e2e8f0;
+}
+.matrix-container .table th,
+.matrix-container .table td {
+  vertical-align: middle;
+  border-color: #cbd5e1;
+}
+
+/* --- Nút hành động gom giữa --- */
+.matrix-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.matrix-actions .btn {
+  min-width: 180px;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Thêm vào sau phần .metrics đã có */
+
+/* Đè mọi định nghĩa cũ, phóng to chữ giá trị metrics */
+.metrics span strong,
+.metrics span .lambda,
+.metrics span .ci,
+.metrics span .cr,
+.metrics span .weights {
+  font-size: 1.7rem !important;   /* hoặc 1.4rem tùy bạn muốn to đến đâu */
+  line-height: 1 !important;
+}
+
+.metrics span {
+  font-size: 1.7rem !important;
+  color: #555 !important;          /* màu label */
+}
+.metrics span strong {
+  font-size: 1.7rem !important;
+  color: #111 !important;          /* màu số để nổi bật */
+}
+
+.matrix-actions {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  margin-top: 1.5rem !important;
+}
+
+/* Ép cỡ chữ và padding cho hai nút ở giữa */
+.matrix-actions .btn {
+  font-size: 1.7rem !important;      /* tăng cỡ chữ lên khoảng 18px */
+  padding: 0.75rem 1.25rem !important; /* tăng padding để nút to, dễ bấm */
+}
+
 </style>
 </head>
 	
@@ -166,7 +268,7 @@ canvas {
           <span>λₘₐₓ: <b class="lambda">–</b></span>
           <span>CI: <b class="ci">–</b></span>
           <span>CR: <b class="cr">–</b></span>
-          <span>Weights: <b class="weights">–</b></span>
+          <span>Trọng số: <b class="weights">–</b></span>
         </div>
         <table class="table table-bordered text-center">
           <thead>
@@ -221,25 +323,26 @@ canvas {
         </table>
       </div>
     {% endfor %}
-    <div class="d-flex justify-content-between mt-4">
-      <button
-        type="submit"
-        formaction="{{ url_for('custom_matrix') }}"
-        formmethod="post"
-        class="btn btn-primary"
-      >
-        <i class="fa-solid fa-calculator"></i> Tính lại AHP
-      </button>
-      <button
-        type="submit"
-        formaction="{{ url_for('recalc_total') }}"
-        formmethod="post"
-        class="btn btn-success"
-        disabled
-      >
-        <i class="fa-solid fa-chart-simple"></i> Xem kết quả tổng
-      </button>
-    </div>
+    <div class="matrix-actions mt-4">
+  <button
+    type="submit"
+    formaction="{{ url_for('custom_matrix') }}"
+    formmethod="post"
+    class="btn btn-primary"
+  >
+    <i class="fa-solid fa-calculator"></i> Tính lại AHP
+  </button>
+  <button
+    type="submit"
+    formaction="{{ url_for('recalc_total') }}"
+    formmethod="post"
+    class="btn btn-success"
+    disabled
+  >
+    <i class="fa-solid fa-chart-simple"></i> Xem tổng kết quả
+  </button>
+</div>
+
   </form>
 </div>
   </div>
